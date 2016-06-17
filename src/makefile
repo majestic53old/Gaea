@@ -21,7 +21,11 @@ CC_FLAGS_EXT=
 DIR_BIN=./../bin/
 DIR_BUILD=./../build/
 DIR_INC=./../include/
+DIR_INC_ENG=./../include/engine/
+DIR_INC_GFX=./../include/graphics/
 DIR_SRC=./
+DIR_SRC_ENG=./engine/
+DIR_SRC_GFX=./graphics/
 LIB=libgaea.a
 
 all: build archive
@@ -29,14 +33,17 @@ all: build archive
 archive:
 	@echo ''
 	@echo '--- BUILDING LIBRARY -----------------------'
-	ar rcs $(DIR_BIN)$(LIB) $(DIR_BUILD)gaea.o $(DIR_BUILD)gaea_exception.o $(DIR_BUILD)gaea_gl.o $(DIR_BUILD)gaea_object.o \
-		$(DIR_BUILD)gaea_uid.o
+	ar rcs $(DIR_BIN)$(LIB) $(DIR_BUILD)gaea.o $(DIR_BUILD)gaea_cubemap.o $(DIR_BUILD)gaea_exception.o $(DIR_BUILD)gaea_gl.o \
+		$(DIR_BUILD)gaea_object.o $(DIR_BUILD)gaea_program.o $(DIR_BUILD)gaea_shader.o $(DIR_BUILD)gaea_texture.o \
+		 $(DIR_BUILD)gaea_uid.o $(DIR_BUILD)gaea_vao.o $(DIR_BUILD)gaea_vbo.o
 	@echo '--- DONE -----------------------------------'
 	@echo ''
 
-build: gaea.o gaea_exception.o gaea_gl.o gaea_object.o gaea_uid.o
+build: build_base build_engine build_graphics
 
-### GAEA ###
+### BASE ###
+
+build_base: gaea.o gaea_exception.o
 
 gaea.o: $(DIR_SRC)gaea.cpp $(DIR_INC)gaea.h
 	$(CC) $(CC_FLAGS) -c $(DIR_SRC)gaea.cpp -o $(DIR_BUILD)gaea.o
@@ -44,13 +51,37 @@ gaea.o: $(DIR_SRC)gaea.cpp $(DIR_INC)gaea.h
 gaea_exception.o: $(DIR_SRC)gaea_exception.cpp $(DIR_INC)gaea_exception.h
 	$(CC) $(CC_FLAGS) -c $(DIR_SRC)gaea_exception.cpp -o $(DIR_BUILD)gaea_exception.o
 
-### GAEA::[...] ###
+### ENGINE ###
 
-gaea_gl.o: $(DIR_SRC)gaea_gl.cpp $(DIR_INC)gaea_gl.h
-	$(CC) $(CC_FLAGS) -c $(DIR_SRC)gaea_gl.cpp -o $(DIR_BUILD)gaea_gl.o
+build_engine: gaea_object.o gaea_uid.o
 
-gaea_object.o: $(DIR_SRC)gaea_object.cpp $(DIR_INC)gaea_object.h
-	$(CC) $(CC_FLAGS) -c $(DIR_SRC)gaea_object.cpp -o $(DIR_BUILD)gaea_object.o
+gaea_object.o: $(DIR_SRC_ENG)gaea_object.cpp $(DIR_INC_ENG)gaea_object.h
+	$(CC) $(CC_FLAGS) -c $(DIR_SRC_ENG)gaea_object.cpp -o $(DIR_BUILD)gaea_object.o
 
-gaea_uid.o: $(DIR_SRC)gaea_uid.cpp $(DIR_INC)gaea_uid.h
-	$(CC) $(CC_FLAGS) -c $(DIR_SRC)gaea_uid.cpp -o $(DIR_BUILD)gaea_uid.o
+gaea_uid.o: $(DIR_SRC_ENG)gaea_uid.cpp $(DIR_INC_ENG)gaea_uid.h
+	$(CC) $(CC_FLAGS) -c $(DIR_SRC_ENG)gaea_uid.cpp -o $(DIR_BUILD)gaea_uid.o
+
+### GRAPHICS ###
+
+build_graphics: gaea_cubemap.o gaea_gl.o gaea_program.o gaea_shader.o gaea_texture.o gaea_vao.o gaea_vbo.o
+
+gaea_cubemap.o: $(DIR_SRC_GFX)gaea_cubemap.cpp $(DIR_INC_GFX)gaea_cubemap.h
+	$(CC) $(CC_FLAGS) -c $(DIR_SRC_GFX)gaea_cubemap.cpp -o $(DIR_BUILD)gaea_cubemap.o
+
+gaea_gl.o: $(DIR_SRC_GFX)gaea_gl.cpp $(DIR_INC_GFX)gaea_gl.h
+	$(CC) $(CC_FLAGS) -c $(DIR_SRC_GFX)gaea_gl.cpp -o $(DIR_BUILD)gaea_gl.o
+
+gaea_program.o: $(DIR_SRC_GFX)gaea_program.cpp $(DIR_INC_GFX)gaea_program.h
+	$(CC) $(CC_FLAGS) -c $(DIR_SRC_GFX)gaea_program.cpp -o $(DIR_BUILD)gaea_program.o
+
+gaea_shader.o: $(DIR_SRC_GFX)gaea_shader.cpp $(DIR_INC_GFX)gaea_shader.h
+	$(CC) $(CC_FLAGS) -c $(DIR_SRC_GFX)gaea_shader.cpp -o $(DIR_BUILD)gaea_shader.o
+
+gaea_texture.o: $(DIR_SRC_GFX)gaea_texture.cpp $(DIR_INC_GFX)gaea_texture.h
+	$(CC) $(CC_FLAGS) -c $(DIR_SRC_GFX)gaea_texture.cpp -o $(DIR_BUILD)gaea_texture.o
+
+gaea_vao.o: $(DIR_SRC_GFX)gaea_vao.cpp $(DIR_INC_GFX)gaea_vao.h
+	$(CC) $(CC_FLAGS) -c $(DIR_SRC_GFX)gaea_vao.cpp -o $(DIR_BUILD)gaea_vao.o
+
+gaea_vbo.o: $(DIR_SRC_GFX)gaea_vbo.cpp $(DIR_INC_GFX)gaea_vbo.h
+	$(CC) $(CC_FLAGS) -c $(DIR_SRC_GFX)gaea_vbo.cpp -o $(DIR_BUILD)gaea_vbo.o

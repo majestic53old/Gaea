@@ -24,9 +24,15 @@
 
 #include "gaea_define.h"
 #include "gaea_exception.h"
-#include "gaea_uid.h"
-#include "gaea_object.h"
-#include "gaea_gl.h"
+#include "engine/gaea_uid.h"
+#include "engine/gaea_object.h"
+#include "graphics/gaea_gl.h"
+#include "graphics/gaea_cubemap.h"
+#include "graphics/gaea_program.h"
+#include "graphics/gaea_shader.h"
+#include "graphics/gaea_texture.h"
+#include "graphics/gaea_vao.h"
+#include "graphics/gaea_vbo.h"
 
 namespace gaea {
 

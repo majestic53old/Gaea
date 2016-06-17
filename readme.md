@@ -13,6 +13,10 @@ Changelog
 =========
 
 ###Version 0.1.1625
+*Updated: 6/16/2016*
+
+* Added GL component classes definitions
+
 *Updated: 6/14/2016*
 
 * Initial commit

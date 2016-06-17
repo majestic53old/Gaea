@@ -17,7 +17,7 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-#include "../include/gaea.h"
+#include "../../include/gaea.h"
 #include "gaea_object_type.h"
 
 namespace gaea {

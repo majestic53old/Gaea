@@ -70,6 +70,10 @@ namespace gaea {
 					__in_opt bool verbose = false
 					);
 
+				virtual void start(void) = 0;
+
+				virtual void stop(void) = 0;
+
 				gaea::gl_type_t type(void);
 
 			protected:

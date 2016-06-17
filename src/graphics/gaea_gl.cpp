@@ -17,7 +17,7 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-#include "../include/gaea.h"
+#include "../../include/gaea.h"
 #include "gaea_gl_type.h"
 
 namespace gaea {
@@ -254,36 +254,38 @@ namespace gaea {
 			__in GLenum target
 			)
 		{
+			std::string name;
 			GLuint result = 0;
 
 			switch(type) {
 				case GL_OBJECT_CUBEMAP:
-
-					// TODO
+				case GL_OBJECT_TEXTURE:
+					GL_CHECK(glGenTextures, OBJECT_COUNT, &result);
+					name = STRING_CONCAT(glGenTextures);
 					break;
 				case GL_OBJECT_PROGRAM:
-
-					// TODO
+					GL_CHECK_RESPONSE(result, glCreateProgram);
+					name = STRING_CONCAT(glCreateProgram);
 					break;
 				case GL_OBJECT_SHADER:
-
-					// TODO
-					break;
-				case GL_OBJECT_TEXTURE:
-
-					// TODO
+					GL_CHECK_RESPONSE(result, glCreateShader, target);
+					name = STRING_CONCAT(glCreateShader);
 					break;
 				case GL_OBJECT_VAO:
-
-					// TODO
+					GL_CHECK(glGenVertexArrays, OBJECT_COUNT, &result);
+					name = STRING_CONCAT(glGenVertexArrays);
 					break;
 				case GL_OBJECT_VBO:
-
-					// TODO
+					GL_CHECK(glGenBuffers, OBJECT_COUNT, &result);
+					name = STRING_CONCAT(glGenBuffers);
 					break;
 				default:
-					THROW_GAEA_GL_EXCEPTION_FORMAT(GAEA_GL_EXCEPTION_INVALID,
-						"%x", type);
+					THROW_GAEA_GL_EXCEPTION_FORMAT(GAEA_GL_EXCEPTION_INVALID, "%x", type);
+			}
+
+			if(!result) {
+				THROW_GAEA_GL_EXCEPTION_FORMAT(GAEA_GL_EXCEPTION_EXTERNAL, "%s failed",
+					STRING_CHECK(name));
 			}
 
 			return result;
@@ -314,31 +316,26 @@ namespace gaea {
 			__in const std::map<gaea::uid_t, std::tuple<gaea::gl_type_t, GLenum, GLuint, size_t>>::iterator &entry
 			)
 		{
+			GLuint handle;
+
+			handle = TUPLE_ENTRY(entry->second, GL_TUPLE_HANDLE);
 
 			switch(TUPLE_ENTRY(entry->second, GL_TUPLE_TYPE)) {
 				case GL_OBJECT_CUBEMAP:
-
-					// TODO
+				case GL_OBJECT_TEXTURE:
+					GL_CHECK(glDeleteTextures, OBJECT_COUNT, &handle);
 					break;
 				case GL_OBJECT_PROGRAM:
-
-					// TODO
+					GL_CHECK(glDeleteProgram, handle);
 					break;
 				case GL_OBJECT_SHADER:
-
-					// TODO
-					break;
-				case GL_OBJECT_TEXTURE:
-
-					// TODO
+					GL_CHECK(glDeleteShader, handle);
 					break;
 				case GL_OBJECT_VAO:
-
-					// TODO
+					GL_CHECK(glDeleteVertexArrays, OBJECT_COUNT, &handle);
 					break;
 				case GL_OBJECT_VBO:
-
-					// TODO
+					GL_CHECK(glDeleteBuffers, OBJECT_COUNT, &handle);
 					break;
 				default:
 					THROW_GAEA_GL_EXCEPTION_FORMAT(GAEA_GL_EXCEPTION_INVALID,

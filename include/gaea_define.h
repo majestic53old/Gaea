@@ -78,6 +78,8 @@ namespace gaea {
 	#define GL_ERROR_STRING(_ERR_) gluErrorString(_ERR_)
 	#define GL_ERROR_STRING__LAST GL_ERROR_STRING(glGetError())
 
+	#define OBJECT_COUNT 1
+
 	#define REFERENCE_INIT 1
 
 	#define SCALAR_AS_HEX(_TYPE_, _VAL_) \
@@ -100,7 +102,7 @@ namespace gaea {
 	#define VERSION_MAJOR 0
 	#define VERSION_MILESTONE "alpha"
 	#define VERSION_MINOR 1
-	#define VERSION_REVISION 2
+	#define VERSION_REVISION 3
 	#define VERSION_WEEK 1625
 }
 
