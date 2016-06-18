@@ -80,6 +80,12 @@ namespace gaea {
 						__in_opt bool verbose = false
 						);
 
+				protected:
+
+					std::vector<GLuint> m_index;
+
+					std::vector<gaea::gl::vbo::base> m_vbo;
+
 			} base;
 		}
 	}

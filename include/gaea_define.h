@@ -68,10 +68,10 @@ namespace gaea {
 		} \
 		}
 	#define GL_CHECK(_CMD_, ...) _CMD_(__VA_ARGS__); _GL_ERROR_CHECK
-	#define GL_CHECK_RESPONSE(_RSP_, _CMD_, ...) (_RSP_) = GL_CHECK(_CMD_, __VA_ARGS__); _GL_ERROR_CHECK
+	#define GL_CHECK_RESULT(_RSP_, _CMD_, ...) (_RSP_) = GL_CHECK(_CMD_, __VA_ARGS__); _GL_ERROR_CHECK
 #else
 	#define GL_CHECK(_CMD_, ...) _CMD_(__VA_ARGS__)
-	#define GL_CHECK_RESPONSE(_RSP_, _CMD_, ...) (_RSP_) = GL_CHECK(_CMD_, __VA_ARGS__)
+	#define GL_CHECK_RESULT(_RSP_, _CMD_, ...) (_RSP_) = GL_CHECK(_CMD_, __VA_ARGS__)
 #endif // NDEBUG
 
 	#define GL_ERROR_CLEAR while(glGetError() != GL_NO_ERROR)
@@ -102,7 +102,7 @@ namespace gaea {
 	#define VERSION_MAJOR 0
 	#define VERSION_MILESTONE "alpha"
 	#define VERSION_MINOR 1
-	#define VERSION_REVISION 3
+	#define VERSION_REVISION 4
 	#define VERSION_WEEK 1625
 }
 

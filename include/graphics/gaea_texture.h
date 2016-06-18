@@ -22,8 +22,11 @@
 
 namespace gaea {
 
+	#define TEXTURE_BORDER_INIT 0
 	#define TEXTURE_FILTER_MAG_INIT GL_LINEAR
-	#define TEXTURE_FILTER_MIN_INIT GL_LINEAR
+	#define TEXTURE_FILTER_MIN_INIT GL_LINEAR_MIPMAP_LINEAR
+	#define TEXTURE_INDEX_INIT GL_TEXTURE0
+	#define TEXTURE_LEVEL_INIT 0
 	#define TEXTURE_WRAP_R_INIT GL_CLAMP_TO_EDGE
 	#define TEXTURE_WRAP_S_INIT GL_CLAMP_TO_EDGE
 	#define TEXTURE_WRAP_T_INIT GL_CLAMP_TO_EDGE
@@ -37,15 +40,16 @@ namespace gaea {
 
 				public:
 
-					_base(void);
-
 					_base(
 						__in const std::string &texture,
 						__in_opt GLint filter_mag = TEXTURE_FILTER_MAG_INIT,
 						__in_opt GLint filter_min = TEXTURE_FILTER_MIN_INIT,
 						__in_opt GLint wrap_s = TEXTURE_WRAP_S_INIT,
 						__in_opt GLint wrap_t = TEXTURE_WRAP_T_INIT,
-						__in_opt GLint wrap_r = TEXTURE_WRAP_R_INIT
+						__in_opt GLint wrap_r = TEXTURE_WRAP_R_INIT,
+						__in_opt GLint level = TEXTURE_LEVEL_INIT,
+						__in_opt GLint border = TEXTURE_BORDER_INIT,
+						__in_opt GLuint index = TEXTURE_INDEX_INIT
 						);
 
 					_base(
@@ -63,15 +67,6 @@ namespace gaea {
 						__in_opt bool verbose = false
 						);
 
-					void setup(
-						__in const std::string &texture,
-						__in_opt GLint filter_mag = TEXTURE_FILTER_MAG_INIT,
-						__in_opt GLint filter_min = TEXTURE_FILTER_MIN_INIT,
-						__in_opt GLint wrap_s = TEXTURE_WRAP_S_INIT,
-						__in_opt GLint wrap_t = TEXTURE_WRAP_T_INIT,
-						__in_opt GLint wrap_r = TEXTURE_WRAP_R_INIT
-						);
-
 					void start(void);
 
 					void stop(void);
@@ -79,6 +74,16 @@ namespace gaea {
 					std::string to_string(
 						__in_opt bool verbose = false
 						);
+
+				protected:
+
+					static std::vector<uint8_t> import(
+						__in const std::string &texture,
+						__out glm::uvec2 &dimensions,
+						__out GLenum &format
+						);
+
+					GLuint m_index;
 
 			} base;
 		}

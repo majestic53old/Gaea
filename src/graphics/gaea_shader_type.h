@@ -35,6 +35,7 @@ namespace gaea {
 
 			enum {
 				GAEA_SHADER_EXCEPTION_EXTERNAL = 0,
+				GAEA_SHADER_EXCEPTION_MALFORMED,
 				GAEA_SHADER_EXCEPTION_NOT_FOUND,
 			};
 
@@ -42,6 +43,7 @@ namespace gaea {
 
 			static const std::string GAEA_SHADER_EXCEPTION_STR[] = {
 				GAEA_SHADER_EXCEPTION_HEADER "External exception",
+				GAEA_SHADER_EXCEPTION_HEADER "Malformed file",
 				GAEA_SHADER_EXCEPTION_HEADER "File does not exist",
 				};
 

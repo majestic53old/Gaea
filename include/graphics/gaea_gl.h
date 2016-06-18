@@ -22,6 +22,7 @@
 
 namespace gaea {
 
+	#define GL_HANDLE_INVALID 0
 	#define GL_INVALID SCALAR_INVALID(gaea::gl_type_t)
 	#define GL_OBJECT_MAX GL_OBJECT_VBO
 	#define GL_TARGET_UNDEFINED 0

@@ -32,10 +32,6 @@ namespace gaea {
 				public:
 
 					_base(
-						__in GLenum type
-						);
-
-					_base(
 						__in const std::string &shader,
 						__in GLenum type
 						);
@@ -55,10 +51,6 @@ namespace gaea {
 						__in_opt bool verbose = false
 						);
 
-					void setup(
-						__in const std::string &shader
-						);
-
 					void start(void);
 
 					void stop(void);
@@ -66,6 +58,12 @@ namespace gaea {
 					std::string to_string(
 						__in_opt bool verbose = false
 						);
+
+				protected:
+
+					void compile(
+						__in const std::string &shader
+						);	
 
 			} base;
 		}

@@ -37,15 +37,8 @@ namespace gaea {
 
 				public:
 
-					_base(void);
-
 					_base(
-						__in const std::string &right,
-						__in const std::string &left,
-						__in const std::string &top,
-						__in const std::string &bottom,
-						__in const std::string &back,
-						__in const std::string &forward,
+						__in const std::vector<std::string> &face,
 						__in_opt GLint filter_mag = CUBEMAP_FILTER_MAG_INIT,
 						__in_opt GLint filter_min = CUBEMAP_FILTER_MIN_INIT,
 						__in_opt GLint wrap_s = CUBEMAP_WRAP_S_INIT,
@@ -66,20 +59,6 @@ namespace gaea {
 					static std::string as_string(
 						__in const _base &object,
 						__in_opt bool verbose = false
-						);
-
-					void setup(
-						__in const std::string &right,
-						__in const std::string &left,
-						__in const std::string &top,
-						__in const std::string &bottom,
-						__in const std::string &back,
-						__in const std::string &forward,
-						__in_opt GLint filter_mag = CUBEMAP_FILTER_MAG_INIT,
-						__in_opt GLint filter_min = CUBEMAP_FILTER_MIN_INIT,
-						__in_opt GLint wrap_s = CUBEMAP_WRAP_S_INIT,
-						__in_opt GLint wrap_t = CUBEMAP_WRAP_T_INIT,
-						__in_opt GLint wrap_r = CUBEMAP_WRAP_R_INIT
 						);
 
 					void start(void);

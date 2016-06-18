@@ -31,8 +31,6 @@ namespace gaea {
 
 				public:
 
-					_base(void);
-
 					_base(
 						__in const GLvoid *data,
 						__in GLsizeiptr size,
@@ -55,19 +53,21 @@ namespace gaea {
 						__in_opt bool verbose = false
 						);
 
-					void setup(
-						__in const GLvoid *data,
-						__in GLsizeiptr size,
-						__in GLenum target,
-						__in GLenum usage
-						);
-
 					void start(void);
 
 					void stop(void);
 
 					std::string to_string(
 						__in_opt bool verbose = false
+						);
+
+				public:
+
+					void setup(
+						__in const GLvoid *data,
+						__in GLsizeiptr size,
+						__in GLenum target,
+						__in GLenum usage
 						);
 
 			} base;

@@ -17,7 +17,7 @@
 
 CC=clang++
 CC_FLAGS=-march=native -std=gnu++11 -O3 -Wall -Werror
-CC_FLAGS_EXT=-lGL -lGLU -lGLEW -lSDL2 -lSDL2main
+CC_FLAGS_EXT=-lGL -lGLU -lGLEW -lSDL2 -lSDL2main -lpng
 DIR_BIN=./../bin/
 DIR_BUILD=./../build/
 DIR_INC=./

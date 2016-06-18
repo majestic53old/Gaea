@@ -13,6 +13,12 @@ Changelog
 =========
 
 ###Version 0.1.1625
+*Updated: 6/17/2016*
+
+* Implemented GL component classes:
+	* Shader/Program
+	* VBO/VAO
+
 *Updated: 6/16/2016*
 
 * Added GL component classes definitions

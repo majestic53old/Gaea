@@ -26,7 +26,83 @@ namespace gaea {
 
 		namespace vbo {
 
-			// TODO
+			_base::_base(
+				__in const GLvoid *data,
+				__in GLsizeiptr size,
+				__in GLenum target,
+				__in GLenum usage
+				) :
+					gaea::gl::base(GL_OBJECT_VBO, target)
+			{
+				setup(data, size, target, usage);
+			}
+
+			_base::_base(
+				__in const _base &other
+				) :
+					gaea::gl::base(other)
+			{
+				return;
+			}
+
+			_base::~_base(void)
+			{
+				return;
+			}
+
+			_base &
+			_base::operator=(
+				__in const _base &other
+				)
+			{
+
+				if(this != &other) {
+					gaea::gl::base::operator=(other);
+				}
+
+				return *this;
+			}
+
+			std::string 
+			_base::as_string(
+				__in const _base &object,
+				__in_opt bool verbose
+				)
+			{
+				return gaea::gl::base::as_string(object, verbose);
+			}
+
+			void 
+			_base::setup(
+				__in const GLvoid *data,
+				__in GLsizeiptr size,
+				__in GLenum target,
+				__in GLenum usage
+				)
+			{
+				GL_CHECK(glBindBuffer, m_target, m_handle);
+				GL_CHECK(glBufferData, target, size, data, usage);
+			}
+
+			void 
+			_base::start(void)
+			{
+				GL_CHECK(glBindBuffer, m_target, m_handle);
+			}
+
+			void 
+			_base::stop(void)
+			{
+				GL_CHECK(glBindBuffer, m_target, GL_HANDLE_INVALID);
+			}
+
+			std::string 
+			_base::to_string(
+				__in_opt bool verbose
+				)
+			{
+				return gaea::gl::vbo::base::as_string(*this, verbose);
+			}
 		}
 	}
 }

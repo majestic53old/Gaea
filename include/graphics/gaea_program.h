@@ -31,11 +31,10 @@ namespace gaea {
 
 				public:
 
-					_base(void);
-
 					_base(
 						__in const std::string &vertex,
-						__in const std::string &fragment
+						__in const std::string &fragment,
+						__in_opt const std::vector<std::string> &attribute = std::vector<std::string>()
 						);
 
 					_base(
@@ -53,79 +52,74 @@ namespace gaea {
 						__in_opt bool verbose = false
 						);
 
-					void set_bool(
+					void set_uniform(
 						__in GLint location,
 						__in GLboolean value
 						);
 
-					void set_float(
+					void set_uniform(
 						__in GLint location,
 						__in GLfloat value
 						);
 
-					void set_int(
+					void set_uniform(
 						__in GLint location,
 						__in GLint value
 						);
 
-					void set_ivec2(
-						__in GLint location,
-						__in const glm::ivec2 &value
-						);
-
-					void set_ivec3(
-						__in GLint location,
-						__in const glm::ivec3 &value
-						);
-
-					void set_ivec4(
-						__in GLint location,
-						__in const glm::ivec4 &value
-						);
-
-					void set_mat4(
-						__in GLint location,
-						__in const glm::mat4 &value
-						);
-
-					void set_uint(
+					void set_uniform(
 						__in GLint location,
 						__in GLuint value
 						);
 
-					void set_uvec2(
-						__in GLint location,
-						__in const glm::uvec2 &value
-						);
-
-					void set_uvec3(
-						__in GLint location,
-						__in const glm::uvec3 &value
-						);
-
-					void set_uvec4(
-						__in GLint location,
-						__in const glm::uvec4 &value
-						);
-
-					void set_vec2(
+					void set_uniform(
 						__in GLint location,
 						__in const glm::vec2 &value
 						);
 
-					void set_vec3(
+					void set_uniform(
 						__in GLint location,
 						__in const glm::vec3 &value
 						);
 
-					void set_vec4(
+					void set_uniform(
 						__in GLint location,
 						__in const glm::vec4 &value
 						);
 
-					void setup(
-						__in const std::string &vertex,
-						__in const std::string &fragment
+					void set_uniform(
+						__in GLint location,
+						__in const glm::ivec2 &value
+						);
+
+					void set_uniform(
+						__in GLint location,
+						__in const glm::ivec3 &value
+						);
+
+					void set_uniform(
+						__in GLint location,
+						__in const glm::ivec4 &value
+						);
+
+					void set_uniform(
+						__in GLint location,
+						__in const glm::uvec2 &value
+						);
+
+					void set_uniform(
+						__in GLint location,
+						__in const glm::uvec3 &value
+						);
+
+					void set_uniform(
+						__in GLint location,
+						__in const glm::uvec4 &value
+						);
+
+					void set_uniform(
+						__in GLint location,
+						__in const glm::mat4 &value
 						);
 
 					void start(void);
@@ -138,6 +132,14 @@ namespace gaea {
 
 					GLint uniform_location(
 						__in const std::string &name
+						);
+
+				protected:
+
+					void link(
+						__in const std::string &vertex,
+						__in const std::string &fragment,
+						__in_opt const std::vector<std::string> &attribute = std::vector<std::string>()
 						);
 
 			} base;

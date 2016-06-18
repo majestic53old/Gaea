@@ -44,7 +44,7 @@ namespace gaea {
 			__in_opt GLenum target
 			) :
 				gaea::object::base(OBJECT_GL, type),
-				m_handle(0),
+				m_handle(GL_HANDLE_INVALID),
 				m_target(target)
 		{
 			generate();
@@ -255,7 +255,7 @@ namespace gaea {
 			)
 		{
 			std::string name;
-			GLuint result = 0;
+			GLuint result = GL_HANDLE_INVALID;
 
 			switch(type) {
 				case GL_OBJECT_CUBEMAP:
@@ -264,11 +264,11 @@ namespace gaea {
 					name = STRING_CONCAT(glGenTextures);
 					break;
 				case GL_OBJECT_PROGRAM:
-					GL_CHECK_RESPONSE(result, glCreateProgram);
+					GL_CHECK_RESULT(result, glCreateProgram);
 					name = STRING_CONCAT(glCreateProgram);
 					break;
 				case GL_OBJECT_SHADER:
-					GL_CHECK_RESPONSE(result, glCreateShader, target);
+					GL_CHECK_RESULT(result, glCreateShader, target);
 					name = STRING_CONCAT(glCreateShader);
 					break;
 				case GL_OBJECT_VAO:
@@ -376,7 +376,7 @@ namespace gaea {
 			__in GLenum target
 			)
 		{
-			GLuint result = 0;
+			GLuint result = GL_HANDLE_INVALID;
 
 			if(!m_initialized) {
 				THROW_GAEA_GL_EXCEPTION(GAEA_GL_EXCEPTION_UNINITIALIZED);
