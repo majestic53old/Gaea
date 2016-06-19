@@ -13,9 +13,10 @@ Changelog
 =========
 
 ###Version 0.1.1625
-*Updated: 6/17/2016*
+*Updated: 6/17-18/2016*
 
 * Implemented GL component classes:
+	* Texture/Cubemap
 	* Shader/Program
 	* VBO/VAO
 

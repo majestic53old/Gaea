@@ -24,8 +24,10 @@
 #include <glm/glm.hpp>
 #include <glm/gtc/matrix_transform.hpp>
 #include <glm/gtc/type_ptr.hpp>
+#include <png.h>
 #include <SDL2/SDL.h>
 #include <cstdint>
+#include <cstdio>
 #include <cstdlib>
 #include <iomanip>
 #include <iostream>
@@ -102,7 +104,7 @@ namespace gaea {
 	#define VERSION_MAJOR 0
 	#define VERSION_MILESTONE "alpha"
 	#define VERSION_MINOR 1
-	#define VERSION_REVISION 4
+	#define VERSION_REVISION 5
 	#define VERSION_WEEK 1625
 }
 

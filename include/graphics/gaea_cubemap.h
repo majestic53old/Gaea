@@ -22,8 +22,12 @@
 
 namespace gaea {
 
+	#define CUBEMAP_BORDER_INIT 0
+	#define CUBEMAP_FACE_COUNT 6
 	#define CUBEMAP_FILTER_MAG_INIT GL_LINEAR
 	#define CUBEMAP_FILTER_MIN_INIT GL_LINEAR
+	#define CUBEMAP_INDEX_INIT GL_TEXTURE0
+	#define CUBEMAP_LEVEL_INIT 0
 	#define CUBEMAP_WRAP_R_INIT GL_CLAMP_TO_EDGE
 	#define CUBEMAP_WRAP_S_INIT GL_CLAMP_TO_EDGE
 	#define CUBEMAP_WRAP_T_INIT GL_CLAMP_TO_EDGE
@@ -39,11 +43,15 @@ namespace gaea {
 
 					_base(
 						__in const std::vector<std::string> &face,
+						__in gaea::image_t type,
 						__in_opt GLint filter_mag = CUBEMAP_FILTER_MAG_INIT,
 						__in_opt GLint filter_min = CUBEMAP_FILTER_MIN_INIT,
 						__in_opt GLint wrap_s = CUBEMAP_WRAP_S_INIT,
 						__in_opt GLint wrap_t = CUBEMAP_WRAP_T_INIT,
-						__in_opt GLint wrap_r = CUBEMAP_WRAP_R_INIT
+						__in_opt GLint wrap_r = CUBEMAP_WRAP_R_INIT,
+						__in_opt GLint level = CUBEMAP_LEVEL_INIT,
+						__in_opt GLint border = CUBEMAP_BORDER_INIT,
+						__in_opt GLuint index = CUBEMAP_INDEX_INIT
 						);
 
 					_base(
@@ -68,6 +76,22 @@ namespace gaea {
 					std::string to_string(
 						__in_opt bool verbose = false
 						);
+
+				protected:
+
+					void load(
+						__in const std::vector<std::string> &face,
+						__in gaea::image_t type,
+						__in_opt GLint filter_mag = CUBEMAP_FILTER_MAG_INIT,
+						__in_opt GLint filter_min = CUBEMAP_FILTER_MIN_INIT,
+						__in_opt GLint wrap_s = CUBEMAP_WRAP_S_INIT,
+						__in_opt GLint wrap_t = CUBEMAP_WRAP_T_INIT,
+						__in_opt GLint wrap_r = CUBEMAP_WRAP_R_INIT,
+						__in_opt GLint level = CUBEMAP_LEVEL_INIT,
+						__in_opt GLint border = CUBEMAP_BORDER_INIT
+						);
+
+					GLuint m_index;
 
 			} base;
 		}

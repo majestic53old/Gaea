@@ -22,18 +22,33 @@
 
 namespace gaea {
 
+	#define IMAGE_INVALID SCALAR_INVALID(image_t)
+	#define IMAGE_MAX IMAGE_PNG
+
 	#define TEXTURE_BORDER_INIT 0
 	#define TEXTURE_FILTER_MAG_INIT GL_LINEAR
 	#define TEXTURE_FILTER_MIN_INIT GL_LINEAR_MIPMAP_LINEAR
 	#define TEXTURE_INDEX_INIT GL_TEXTURE0
 	#define TEXTURE_LEVEL_INIT 0
-	#define TEXTURE_WRAP_R_INIT GL_CLAMP_TO_EDGE
 	#define TEXTURE_WRAP_S_INIT GL_CLAMP_TO_EDGE
 	#define TEXTURE_WRAP_T_INIT GL_CLAMP_TO_EDGE
 
+	typedef enum {
+		IMAGE_PNG = 0,
+	} image_t;
+
 	namespace gl {
 
-		namespace texture {
+		namespace texture {			
+
+			void import(
+				__in const std::string &texture,
+				__in gaea::image_t type,
+				__out std::vector<uint8_t> &data,
+				__out glm::ivec2 &dimensions,
+				__out uint8_t &color,
+				__out uint8_t &depth
+				);
 
 			typedef class _base :
 					public gaea::gl::base {
@@ -42,11 +57,11 @@ namespace gaea {
 
 					_base(
 						__in const std::string &texture,
+						__in gaea::image_t type,
 						__in_opt GLint filter_mag = TEXTURE_FILTER_MAG_INIT,
 						__in_opt GLint filter_min = TEXTURE_FILTER_MIN_INIT,
 						__in_opt GLint wrap_s = TEXTURE_WRAP_S_INIT,
 						__in_opt GLint wrap_t = TEXTURE_WRAP_T_INIT,
-						__in_opt GLint wrap_r = TEXTURE_WRAP_R_INIT,
 						__in_opt GLint level = TEXTURE_LEVEL_INIT,
 						__in_opt GLint border = TEXTURE_BORDER_INIT,
 						__in_opt GLuint index = TEXTURE_INDEX_INIT
@@ -77,10 +92,15 @@ namespace gaea {
 
 				protected:
 
-					static std::vector<uint8_t> import(
+					void load(
 						__in const std::string &texture,
-						__out glm::uvec2 &dimensions,
-						__out GLenum &format
+						__in gaea::image_t type,
+						__in_opt GLint filter_mag = TEXTURE_FILTER_MAG_INIT,
+						__in_opt GLint filter_min = TEXTURE_FILTER_MIN_INIT,
+						__in_opt GLint wrap_s = TEXTURE_WRAP_S_INIT,
+						__in_opt GLint wrap_t = TEXTURE_WRAP_T_INIT,
+						__in_opt GLint level = TEXTURE_LEVEL_INIT,
+						__in_opt GLint border = TEXTURE_BORDER_INIT
 						);
 
 					GLuint m_index;
