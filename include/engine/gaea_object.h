@@ -27,51 +27,55 @@ namespace gaea {
 	#define OBJECT_SUBTYPE_UNDEFINED SCALAR_INVALID(uint32_t)
 
 	typedef enum {
-		OBJECT_GL = 0,
+		OBJECT_ENTITY = 0,
+		OBJECT_GL,
 	} type_t;
 
-	namespace object {
+	namespace engine {
 
-		typedef class _base :
-				public gaea::uid::base {
+		namespace object {
 
-			public:
+			typedef class _base :
+					public gaea::engine::uid::base {
 
-				_base(
-					__in gaea::type_t type,
-					__in_opt uint32_t subtype = OBJECT_SUBTYPE_UNDEFINED
-					);
+				public:
 
-				_base(
-					__in const _base &other
-					);
+					_base(
+						__in gaea::type_t type,
+						__in_opt uint32_t subtype = OBJECT_SUBTYPE_UNDEFINED
+						);
 
-				virtual ~_base(void);
+					_base(
+						__in const _base &other
+						);
 
-				_base &operator=(
-					__in const _base &other
-					);
+					virtual ~_base(void);
 
-				static std::string as_string(
-					__in const _base &object,
-					__in_opt bool verbose = false
-					);
+					_base &operator=(
+						__in const _base &other
+						);
 
-				uint32_t subtype(void);
+					static std::string as_string(
+						__in const _base &object,
+						__in_opt bool verbose = false
+						);
 
-				virtual std::string to_string(
-					__in_opt bool verbose = false
-					);
+					uint32_t subtype(void);
 
-				gaea::type_t type(void);
+					virtual std::string to_string(
+						__in_opt bool verbose = false
+						);
 
-			protected:
+					gaea::type_t type(void);
 
-				uint32_t m_subtype;
+				protected:
 
-				gaea::type_t m_type;
+					uint32_t m_subtype;
 
-		} base;
+					gaea::type_t m_type;
+
+			} base;
+		}
 	}
 }
 

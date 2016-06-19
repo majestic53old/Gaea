@@ -26,13 +26,14 @@
 #include "gaea_exception.h"
 #include "engine/gaea_uid.h"
 #include "engine/gaea_object.h"
-#include "graphics/gaea_gl.h"
-#include "graphics/gaea_vbo.h"
-#include "graphics/gaea_vao.h"
-#include "graphics/gaea_shader.h"
-#include "graphics/gaea_program.h"
-#include "graphics/gaea_texture.h"
-#include "graphics/gaea_cubemap.h"
+#include "graphics/gl/gaea_gl.h"
+#include "graphics/gl/gaea_vbo.h"
+#include "graphics/gl/gaea_vao.h"
+#include "graphics/gl/gaea_shader.h"
+#include "graphics/gl/gaea_program.h"
+#include "graphics/gl/gaea_texture.h"
+#include "graphics/gl/gaea_cubemap.h"
+#include "engine/gaea_entity.h"
 
 namespace gaea {
 
@@ -107,7 +108,7 @@ namespace gaea {
 				__in GLfloat delta
 				);
 
-			gaea::gl::manager &m_gl_manager;
+			gaea::graphics::gl::manager &m_gl_manager;
 
 			bool m_initialized;
 
@@ -117,7 +118,7 @@ namespace gaea {
 
 			gaea::tick_t m_tick; 
 
-			gaea::uid::manager &m_uid_manager;
+			gaea::engine::uid::manager &m_uid_manager;
 
 			SDL_Window *m_window;
 

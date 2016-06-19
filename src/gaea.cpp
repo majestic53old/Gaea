@@ -68,11 +68,11 @@ namespace gaea {
 	_manager *_manager::m_instance = nullptr;
 
 	_manager::_manager(void) :
-		m_gl_manager(gaea::gl::manager::acquire()),
+		m_gl_manager(gaea::graphics::gl::manager::acquire()),
 		m_initialized(false),
 		m_started(false),
 		m_tick(TICK_INVALID),
-		m_uid_manager(gaea::uid::manager::acquire()),
+		m_uid_manager(gaea::engine::uid::manager::acquire()),
 		m_window(nullptr),
 		m_window_context(nullptr)
 	{

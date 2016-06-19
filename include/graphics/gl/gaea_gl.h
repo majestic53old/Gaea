@@ -17,24 +17,38 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-#ifndef GAEA_UID_H_
-#define GAEA_UID_H_
+#ifndef GAEA_GL_H_
+#define GAEA_GL_H_
 
 namespace gaea {
 
-	#define UID_INVALID SCALAR_INVALID(gaea::uid_t)
+	#define GL_HANDLE_INVALID 0
+	#define GL_INVALID SCALAR_INVALID(gaea::gl_type_t)
+	#define GL_OBJECT_MAX GL_OBJECT_VBO
+	#define GL_TARGET_UNDEFINED 0
 
-	typedef uint32_t uid_t;
+	typedef enum {
+		GL_OBJECT_CUBEMAP = 0,
+		GL_OBJECT_PROGRAM,
+		GL_OBJECT_SHADER,
+		GL_OBJECT_TEXTURE,
+		GL_OBJECT_VAO,
+		GL_OBJECT_VBO,
+	} gl_type_t;
 
-	namespace engine {
+	namespace graphics {
 
-		namespace uid {
+		namespace gl {
 
-			typedef class _base {
+			typedef class _base :
+					public gaea::engine::object::base {
 
 				public:
 
-					_base(void);
+					_base(
+						__in gaea::gl_type_t type,
+						__in_opt GLenum target = GL_TARGET_UNDEFINED
+						);
 
 					_base(
 						__in const _base &other
@@ -46,31 +60,26 @@ namespace gaea {
 						__in const _base &other
 						);
 
-					bool operator==(
-						__in const _base &other
-						);
-
-					bool operator!=(
-						__in const _base &other
-						);
-
 					static std::string as_string(
 						__in const _base &object,
 						__in_opt bool verbose = false
 						);
 
-					const gaea::uid_t &id(void);
+					GLuint handle(void);
+
+					GLenum target(void);
 
 					virtual std::string to_string(
 						__in_opt bool verbose = false
 						);
 
-				protected:
+					virtual void start(void) = 0;
 
-					friend bool operator<(
-						__in const _base &left,
-						__in const _base &right
-						);
+					virtual void stop(void) = 0;
+
+					gaea::gl_type_t type(void);
+
+				protected:
 
 					void decrement_reference(void);
 
@@ -78,14 +87,11 @@ namespace gaea {
 
 					void increment_reference(void);
 
-					gaea::uid_t m_id;
+					GLuint m_handle;
+
+					GLenum m_target;
 
 			} base;
-
-			bool operator<(
-				__in const gaea::engine::uid::base &left,
-				__in const gaea::engine::uid::base &right
-				);
 
 			typedef class _manager {
 
@@ -96,19 +102,24 @@ namespace gaea {
 					static _manager &acquire(void);
 
 					bool contains(
-						__in const gaea::uid_t &id
+						__in const gaea::uid_t &id,
+						__in gaea::gl_type_t type
 						);
 
 					size_t decrement_reference(
-						__in const gaea::uid_t &id
+						__in const gaea::uid_t &id,
+						__in gaea::gl_type_t type
 						);
 
-					void generate(
-						__out gaea::uid_t &id
+					GLuint generate(
+						__in const gaea::uid_t &id,
+						__in gaea::gl_type_t type,
+						__in GLenum target
 						);
 
 					size_t increment_reference(
-						__in const gaea::uid_t &id
+						__in const gaea::uid_t &id,
+						__in gaea::gl_type_t type
 						);
 
 					void initialize(void);
@@ -118,10 +129,15 @@ namespace gaea {
 					bool is_initialized(void);
 
 					size_t reference_count(
-						__in const gaea::uid_t &id
+						__in const gaea::uid_t &id,
+						__in gaea::gl_type_t type
 						);
 
 					size_t size(void);
+
+					size_t size(
+						__in gaea::gl_type_t type
+						);
 
 					std::string to_string(
 						__in_opt bool verbose = false
@@ -145,23 +161,29 @@ namespace gaea {
 
 					void clear(void);
 
-					std::map<gaea::uid_t, size_t>::iterator find(
-						__in const gaea::uid_t &id
+					GLuint create(
+						__in gaea::gl_type_t type,
+						__in GLenum target
 						);
 
-					std::map<gaea::uid_t, size_t> m_entry;
+					void destroy(
+						__in const std::map<gaea::uid_t, std::tuple<gaea::gl_type_t, GLenum, GLuint, size_t>>::iterator &entry
+						);
+
+					std::map<gaea::uid_t, std::tuple<gaea::gl_type_t, GLenum, GLuint, size_t>>::iterator find(
+						__in const gaea::uid_t &id,
+						__in gaea::gl_type_t type
+						);
+
+					std::vector<std::map<gaea::uid_t, std::tuple<gaea::gl_type_t, GLenum, GLuint, size_t>>> m_entry;
 
 					bool m_initialized;
 
 					static _manager *m_instance;
-
-					gaea::uid_t m_next;
-
-					std::set<gaea::uid_t> m_surplus;
 
 			} manager;
 		}
 	}
 }
 
-#endif // GAEA_UID_H_
+#endif // GAEA_GL_H_

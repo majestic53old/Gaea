@@ -17,57 +17,16 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-#ifndef GAEA_SHADER_H_
-#define GAEA_SHADER_H_
+#include "../../include/gaea.h"
+#include "gaea_entity_type.h"
 
 namespace gaea {
 
-	namespace gl {
+	namespace engine {
 
-		namespace shader {
+		namespace entity {
 
-			typedef class _base :
-					public gaea::gl::base {
-
-				public:
-
-					_base(
-						__in const std::string &shader,
-						__in GLenum type
-						);
-
-					_base(
-						__in const _base &other
-						);
-
-					virtual ~_base(void);
-
-					_base &operator=(
-						__in const _base &other
-						);
-
-					static std::string as_string(
-						__in const _base &object,
-						__in_opt bool verbose = false
-						);
-
-					void start(void);
-
-					void stop(void);
-
-					std::string to_string(
-						__in_opt bool verbose = false
-						);
-
-				protected:
-
-					void compile(
-						__in const std::string &shader
-						);	
-
-			} base;
+			// TODO
 		}
 	}
 }
-
-#endif // GAEA_SHADER_H_
