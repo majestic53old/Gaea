@@ -41,6 +41,17 @@ namespace gaea {
 				COMMAND_TUPLE_REFERENCE,
 			};
 
+			void 
+			notify(
+				__in gaea::cmd_type_t type,
+				__in_opt uint32_t specifier,
+				__in_opt void *context,
+				__in_opt uint32_t length
+				)
+			{
+				gaea::engine::command::base entry(type, specifier, context, length);
+			}
+
 			_base::_base(
 				__in gaea::cmd_type_t type,
 				__in_opt uint32_t specifier,
@@ -343,7 +354,7 @@ namespace gaea {
 					THROW_GAEA_COMMAND_EXCEPTION(GAEA_COMMAND_EXCEPTION_UNINITIALIZED);
 				}
 
-				if(type >= m_entry.size()) {
+				if((type >= m_entry.size()) || (type >= m_observer.size())) {
 					THROW_GAEA_COMMAND_EXCEPTION_FORMAT(GAEA_COMMAND_EXCEPTION_INVALID,
 						"%x", type);
 				}
@@ -353,7 +364,7 @@ namespace gaea {
 						"%x", type);
 				}
 
-				if(context && length) {
+				if(context && length && !m_observer.at(type).empty()) {
 
 					result = new uint8_t[length];
 					if(!result) {
@@ -486,7 +497,9 @@ namespace gaea {
 			}
 
 			void 
-			_manager::update(void)
+			_manager::update(
+				__in GLfloat delta
+				)
 			{
 				// TODO: for each type:
 					// for each registered observer:

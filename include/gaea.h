@@ -108,6 +108,8 @@ namespace gaea {
 				__in GLfloat delta
 				);
 
+			gaea::engine::command::manager &m_command_manager;
+
 			gaea::graphics::gl::manager &m_gl_manager;
 
 			bool m_initialized;

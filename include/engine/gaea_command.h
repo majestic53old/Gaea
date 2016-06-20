@@ -38,6 +38,13 @@ namespace gaea {
 
 		namespace command {
 
+			void notify(
+				__in gaea::cmd_type_t type,
+				__in_opt uint32_t specifier = COMMAND_SPECIFIER_UNDEFINED,
+				__in_opt void *context = nullptr,
+				__in_opt uint32_t length = 0
+				);
+
 			typedef class _base :
 					public gaea::engine::object::base {
 
@@ -169,7 +176,9 @@ namespace gaea {
 						__in gaea::cmd_type_t type
 						);
 
-					void update(void);
+					void update(
+						__in GLfloat delta
+						);
 
 				protected:
 

@@ -68,6 +68,7 @@ namespace gaea {
 	_manager *_manager::m_instance = nullptr;
 
 	_manager::_manager(void) :
+		m_command_manager(gaea::engine::command::manager::acquire()),
 		m_gl_manager(gaea::graphics::gl::manager::acquire()),
 		m_initialized(false),
 		m_started(false),
@@ -118,6 +119,7 @@ namespace gaea {
 		}
 
 		m_uid_manager.initialize();
+		m_command_manager.initialize();
 
 		// TODO: initialize singletons
 
@@ -288,21 +290,21 @@ namespace gaea {
 				switch(event.type) {
 					case SDL_KEYDOWN:
 					case SDL_KEYUP:
-
-						// TODO: handle key press
+						gaea::engine::command::notify(COMMAND_INPUT_KEYBOARD, COMMAND_SPECIFIER_UNDEFINED,
+							&event.key, sizeof(SDL_KeyboardEvent));
 						break;
 					case SDL_MOUSEBUTTONDOWN:
 					case SDL_MOUSEBUTTONUP:
-
-						// TODO: handle mouse press
+						gaea::engine::command::notify(COMMAND_INPUT_MOUSE_BUTTON, COMMAND_SPECIFIER_UNDEFINED,
+							&event.button, sizeof(SDL_MouseButtonEvent));
 						break;
 					case SDL_MOUSEMOTION:
-
-						// TODO: handle mouse motion
+						gaea::engine::command::notify(COMMAND_INPUT_MOUSE_MOTION, COMMAND_SPECIFIER_UNDEFINED,
+							&event.motion, sizeof(SDL_MouseMotionEvent));
 						break;
 					case SDL_MOUSEWHEEL:
-
-						// TODO: handle mouse wheel
+						gaea::engine::command::notify(COMMAND_INPUT_MOUSE_WHEEL, COMMAND_SPECIFIER_UNDEFINED,
+							&event.wheel, sizeof(SDL_MouseWheelEvent));
 						break;
 					case SDL_QUIT:
 						stop();
@@ -408,6 +410,7 @@ namespace gaea {
 
 			// TODO: uninitialize singletons
 
+			m_command_manager.uninitialize();
 			m_uid_manager.uninitialize();
 		}
 	}
@@ -417,6 +420,8 @@ namespace gaea {
 		__in GLfloat delta
 		)
 	{
+		m_command_manager.update(delta);
+
 		// TODO: update
 	}
 }
