@@ -27,7 +27,7 @@ namespace gaea {
 	#define OBJECT_SUBTYPE_UNDEFINED SCALAR_INVALID(uint32_t)
 
 	typedef enum {
-		OBJECT_ENTITY = 0,
+		OBJECT_COMMAND = 0,
 		OBJECT_GL,
 	} type_t;
 

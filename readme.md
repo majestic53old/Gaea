@@ -13,6 +13,10 @@ Changelog
 =========
 
 ###Version 0.1.1625
+*Updated: 6/19/2016*
+
+* Added command base/observer/manager classes
+
 *Updated: 6/17-18/2016*
 
 * Implemented GL component classes:

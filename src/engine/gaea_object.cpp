@@ -31,7 +31,7 @@ namespace gaea {
 				STRING_CHECK(OBJECT_STR[_TYPE_]))
 
 			static const std::string OBJECT_STR[] = {
-				"ENTITY", "GL",
+				"COMMAND", "GL",
 				};
 
 			_base::_base(

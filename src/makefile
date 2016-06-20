@@ -35,7 +35,7 @@ all: build archive
 archive:
 	@echo ''
 	@echo '--- BUILDING LIBRARY -----------------------'
-	ar rcs $(DIR_BIN)$(LIB) $(DIR_BUILD)gaea.o $(DIR_BUILD)gaea_cubemap.o $(DIR_BUILD)gaea_entity.o $(DIR_BUILD)gaea_exception.o \
+	ar rcs $(DIR_BIN)$(LIB) $(DIR_BUILD)gaea.o $(DIR_BUILD)gaea_command.o $(DIR_BUILD)gaea_cubemap.o $(DIR_BUILD)gaea_exception.o \
 		$(DIR_BUILD)gaea_gl.o $(DIR_BUILD)gaea_object.o $(DIR_BUILD)gaea_program.o $(DIR_BUILD)gaea_shader.o $(DIR_BUILD)gaea_texture.o \
 		$(DIR_BUILD)gaea_uid.o $(DIR_BUILD)gaea_vao.o $(DIR_BUILD)gaea_vbo.o
 	@echo '--- DONE -----------------------------------'
@@ -55,10 +55,10 @@ gaea_exception.o: $(DIR_SRC)gaea_exception.cpp $(DIR_INC)gaea_exception.h
 
 ### ENGINE ###
 
-build_engine: gaea_entity.o gaea_object.o gaea_uid.o
+build_engine: gaea_command.o gaea_object.o gaea_uid.o
 
-gaea_entity.o: $(DIR_SRC_ENG)gaea_entity.cpp $(DIR_INC_ENG)gaea_entity.h
-	$(CC) $(CC_FLAGS) -c $(DIR_SRC_ENG)gaea_entity.cpp -o $(DIR_BUILD)gaea_entity.o
+gaea_command.o: $(DIR_SRC_ENG)gaea_command.cpp $(DIR_INC_ENG)gaea_command.h
+	$(CC) $(CC_FLAGS) -c $(DIR_SRC_ENG)gaea_command.cpp -o $(DIR_BUILD)gaea_command.o
 
 gaea_object.o: $(DIR_SRC_ENG)gaea_object.cpp $(DIR_INC_ENG)gaea_object.h
 	$(CC) $(CC_FLAGS) -c $(DIR_SRC_ENG)gaea_object.cpp -o $(DIR_BUILD)gaea_object.o

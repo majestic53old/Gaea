@@ -26,6 +26,7 @@
 #include "gaea_exception.h"
 #include "engine/gaea_uid.h"
 #include "engine/gaea_object.h"
+#include "engine/gaea_command.h"
 #include "graphics/gl/gaea_gl.h"
 #include "graphics/gl/gaea_vbo.h"
 #include "graphics/gl/gaea_vao.h"
@@ -33,7 +34,6 @@
 #include "graphics/gl/gaea_program.h"
 #include "graphics/gl/gaea_texture.h"
 #include "graphics/gl/gaea_cubemap.h"
-#include "engine/gaea_entity.h"
 
 namespace gaea {
 

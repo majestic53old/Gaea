@@ -75,7 +75,7 @@ namespace gaea {
 
 						void stop(void);
 
-						std::string to_string(
+						virtual std::string to_string(
 							__in_opt bool verbose = false
 							);
 

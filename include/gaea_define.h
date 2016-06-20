@@ -32,6 +32,7 @@
 #include <iomanip>
 #include <iostream>
 #include <map>
+#include <queue>
 #include <set>
 #include <sstream>
 #include <string>
@@ -58,6 +59,8 @@ namespace gaea {
 	#ifndef __out_opt
 	#define __out_opt
 	#endif // __out_opt
+
+	#define BYTES_PER_KBYTE 1024
 
 #ifndef NDEBUG
 	#define _GL_ERROR_CHECK { \
@@ -104,7 +107,7 @@ namespace gaea {
 	#define VERSION_MAJOR 0
 	#define VERSION_MILESTONE "alpha"
 	#define VERSION_MINOR 1
-	#define VERSION_REVISION 5
+	#define VERSION_REVISION 6
 	#define VERSION_WEEK 1625
 }
 
