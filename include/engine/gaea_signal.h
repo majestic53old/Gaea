@@ -17,42 +17,33 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-#ifndef GAEA_OBJECT_H_
-#define GAEA_OBJECT_H_
+#ifndef GAEA_SIGNAL_H_
+#define GAEA_SIGNAL_H_
 
 namespace gaea {
 
-	#define OBJECT_INVALID SCALAR_INVALID(gaea::type_t)
-	#define OBJECT_MAX OBJECT_GL
-	#define OBJECT_SUBTYPE_UNDEFINED SCALAR_INVALID(uint32_t)
-
-	typedef enum {
-		OBJECT_EVENT = 0,
-		OBJECT_GL,
-	} type_t;
+	#define SIGNAL_INIT false
 
 	namespace engine {
 
-		namespace object {
+		namespace signal {
 
-			typedef class _base :
-					public gaea::engine::uid::base {
+			typedef class _base {
 
 				public:
 
 					_base(
-						__in gaea::type_t type,
-						__in_opt uint32_t subtype = OBJECT_SUBTYPE_UNDEFINED
+						__in_opt bool signaled = SIGNAL_INIT
 						);
 
 					_base(
-						__in const _base &other
+						__in _base &other
 						);
 
 					virtual ~_base(void);
 
 					_base &operator=(
-						__in const _base &other
+						__in _base &other
 						);
 
 					static std::string as_string(
@@ -60,23 +51,29 @@ namespace gaea {
 						__in_opt bool verbose = false
 						);
 
-					uint32_t subtype(void);
+					void clear(void);
 
-					virtual std::string to_string(
+					bool is_signaled(void);
+
+					void signal(void);
+
+					std::string to_string(
 						__in_opt bool verbose = false
 						);
 
-					gaea::type_t type(void);
+					void wait(void);
 
 				protected:
 
-					uint32_t m_subtype;
+					std::condition_variable m_condition;
 
-					gaea::type_t m_type;
+					std::mutex m_mutex;
+
+					bool m_signaled;
 
 			} base;
 		}
 	}
 }
 
-#endif // GAEA_OBJECT_H_
+#endif // GAEA_SIGNAL_H_

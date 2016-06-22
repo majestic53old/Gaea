@@ -17,33 +17,25 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-#ifndef GAEA_OBJECT_H_
-#define GAEA_OBJECT_H_
+#ifndef GAEA_VAO_H_
+#define GAEA_VAO_H_
 
 namespace gaea {
 
-	#define OBJECT_INVALID SCALAR_INVALID(gaea::type_t)
-	#define OBJECT_MAX OBJECT_GL
-	#define OBJECT_SUBTYPE_UNDEFINED SCALAR_INVALID(uint32_t)
+	#define VAO_NORMALIZED_INIT GL_FALSE
+	#define VAO_POINTER_INIT nullptr
+	#define VAO_STRIDE_INIT 0
 
-	typedef enum {
-		OBJECT_EVENT = 0,
-		OBJECT_GL,
-	} type_t;
+	namespace graphics {
 
-	namespace engine {
-
-		namespace object {
+		namespace vao {
 
 			typedef class _base :
-					public gaea::engine::uid::base {
+					public gaea::graphics::base {
 
 				public:
 
-					_base(
-						__in gaea::type_t type,
-						__in_opt uint32_t subtype = OBJECT_SUBTYPE_UNDEFINED
-						);
+					_base(void);
 
 					_base(
 						__in const _base &other
@@ -60,23 +52,43 @@ namespace gaea {
 						__in_opt bool verbose = false
 						);
 
-					uint32_t subtype(void);
+					void add_attribute(
+						__in const GLvoid *data,
+						__in GLsizeiptr size,
+						__in GLenum target,
+						__in GLenum usage,
+						__in GLuint index,
+						__in GLint element_size,
+						__in GLenum element_type,
+						__in_opt GLboolean normalized = VAO_NORMALIZED_INIT,
+						__in_opt GLsizei stride = VAO_STRIDE_INIT,
+						__in_opt const GLvoid *pointer = VAO_POINTER_INIT
+						);
+
+					void add_data(
+						__in const GLvoid *data,
+						__in GLsizeiptr size,
+						__in GLenum target,
+						__in GLenum usage
+						);
+
+					void start(void);
+
+					void stop(void);
 
 					virtual std::string to_string(
 						__in_opt bool verbose = false
 						);
 
-					gaea::type_t type(void);
-
 				protected:
 
-					uint32_t m_subtype;
+					std::vector<GLuint> m_index;
 
-					gaea::type_t m_type;
+					std::vector<gaea::graphics::vbo::base> m_vbo;
 
 			} base;
 		}
 	}
 }
 
-#endif // GAEA_OBJECT_H_
+#endif // GAEA_VAO_H_

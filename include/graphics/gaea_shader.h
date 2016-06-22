@@ -24,51 +24,48 @@ namespace gaea {
 
 	namespace graphics {
 
-		namespace gl {
+		namespace shader {
 
-			namespace shader {
+			typedef class _base :
+					public gaea::graphics::base {
 
-				typedef class _base :
-						public gaea::graphics::gl::base {
+				public:
 
-					public:
+					_base(
+						__in const std::string &shader,
+						__in GLenum type
+						);
 
-						_base(
-							__in const std::string &shader,
-							__in GLenum type
-							);
+					_base(
+						__in const _base &other
+						);
 
-						_base(
-							__in const _base &other
-							);
+					virtual ~_base(void);
 
-						virtual ~_base(void);
+					_base &operator=(
+						__in const _base &other
+						);
 
-						_base &operator=(
-							__in const _base &other
-							);
+					static std::string as_string(
+						__in const _base &object,
+						__in_opt bool verbose = false
+						);
 
-						static std::string as_string(
-							__in const _base &object,
-							__in_opt bool verbose = false
-							);
+					void start(void);
 
-						void start(void);
+					void stop(void);
 
-						void stop(void);
+					virtual std::string to_string(
+						__in_opt bool verbose = false
+						);
 
-						virtual std::string to_string(
-							__in_opt bool verbose = false
-							);
+				protected:
 
-					protected:
+					void compile(
+						__in const std::string &shader
+						);	
 
-						void compile(
-							__in const std::string &shader
-							);	
-
-				} base;
-			}
+			} base;
 		}
 	}
 }

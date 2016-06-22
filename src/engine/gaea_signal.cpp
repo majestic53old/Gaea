@@ -18,42 +18,26 @@
  */
 
 #include "../../include/gaea.h"
-#include "gaea_object_type.h"
+#include "gaea_signal_type.h"
 
 namespace gaea {
 
 	namespace engine {
 
-		namespace object {
-
-			#define OBJECT_STRING(_TYPE_) \
-				((_TYPE_) > OBJECT_MAX ? STRING_UNKNOWN : \
-				STRING_CHECK(OBJECT_STR[_TYPE_]))
-
-			static const std::string OBJECT_STR[] = {
-				"EVENT", "GL",
-				};
+		namespace signal {
 
 			_base::_base(
-				__in gaea::type_t type,
-				__in_opt uint32_t subtype
+				__in_opt bool signaled
 				) :
-					m_subtype(subtype),
-					m_type(type)
+					m_signaled(signaled)
 			{
-
-				if(m_type > OBJECT_MAX) {
-					THROW_GAEA_OBJECT_EXCEPTION_FORMAT(GAEA_OBJECT_EXCEPTION_INVALID, 
-						"%x", type);
-				}
+				return;
 			}
 
 			_base::_base(
-				__in const _base &other
+				__in _base &other
 				) :
-					gaea::engine::uid::base(other),
-					m_subtype(other.m_subtype),
-					m_type(other.m_type)
+					m_signaled(other.m_signaled)
 			{
 				return;
 			}
@@ -65,14 +49,12 @@ namespace gaea {
 
 			_base &
 			_base::operator=(
-				__in const _base &other
+				__in _base &other
 				)
 			{
 
 				if(this != &other) {
-					gaea::engine::uid::base::operator=(other);
-					m_subtype = other.m_subtype;
-					m_type = other.m_type;
+					m_signaled = other.m_signaled;
 				}
 
 				return *this;
@@ -86,22 +68,33 @@ namespace gaea {
 			{
 				std::stringstream result;
 
-				result << gaea::engine::uid::base::as_string(object, verbose)
-					<< " [" << OBJECT_STRING(object.m_type);
-
-				if(object.m_subtype != OBJECT_SUBTYPE_UNDEFINED) {
-					result << ", " << SCALAR_AS_HEX(uint32_t, object.m_subtype);
-				}
-
-				result << "]";
+				result << (object.m_signaled ? "SIGNALED" : "CLEAR");
 
 				return result.str();
 			}
 
-			uint32_t 
-			_base::subtype(void)
+			void 
+			_base::clear(void)
 			{
-				return m_subtype;
+				std::lock_guard<std::mutex> lock(m_mutex);
+
+				m_signaled = false;
+				m_condition.notify_all();
+			}
+
+			bool 
+			_base::is_signaled(void)
+			{
+				return m_signaled;
+			}
+
+			void 
+			_base::signal(void)
+			{
+				std::lock_guard<std::mutex> lock(m_mutex);
+
+				m_signaled = true;
+				m_condition.notify_all();
 			}
 
 			std::string 
@@ -109,13 +102,16 @@ namespace gaea {
 				__in_opt bool verbose
 				)
 			{
-				return gaea::engine::object::base::as_string(*this, verbose);
+				return gaea::engine::signal::base::as_string(*this, verbose);
 			}
 
-			gaea::type_t 
-			_base::type(void)
+			void 
+			_base::wait(void)
 			{
-				return m_type;
+				std::unique_lock<std::mutex> lock(m_mutex);
+
+				m_condition.wait(lock, [this] { return m_signaled; });
+				m_signaled = false;
 			}
 		}
 	}

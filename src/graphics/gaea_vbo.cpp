@@ -18,42 +18,29 @@
  */
 
 #include "../../include/gaea.h"
-#include "gaea_object_type.h"
+#include "gaea_vbo_type.h"
 
 namespace gaea {
 
-	namespace engine {
+	namespace graphics {
 
-		namespace object {
-
-			#define OBJECT_STRING(_TYPE_) \
-				((_TYPE_) > OBJECT_MAX ? STRING_UNKNOWN : \
-				STRING_CHECK(OBJECT_STR[_TYPE_]))
-
-			static const std::string OBJECT_STR[] = {
-				"EVENT", "GL",
-				};
+		namespace vbo {
 
 			_base::_base(
-				__in gaea::type_t type,
-				__in_opt uint32_t subtype
+				__in const GLvoid *data,
+				__in GLsizeiptr size,
+				__in GLenum target,
+				__in GLenum usage
 				) :
-					m_subtype(subtype),
-					m_type(type)
+					gaea::graphics::base(GL_OBJECT_VBO, target)
 			{
-
-				if(m_type > OBJECT_MAX) {
-					THROW_GAEA_OBJECT_EXCEPTION_FORMAT(GAEA_OBJECT_EXCEPTION_INVALID, 
-						"%x", type);
-				}
+				setup(data, size, target, usage);
 			}
 
 			_base::_base(
 				__in const _base &other
 				) :
-					gaea::engine::uid::base(other),
-					m_subtype(other.m_subtype),
-					m_type(other.m_type)
+					gaea::graphics::base(other)
 			{
 				return;
 			}
@@ -70,9 +57,7 @@ namespace gaea {
 			{
 
 				if(this != &other) {
-					gaea::engine::uid::base::operator=(other);
-					m_subtype = other.m_subtype;
-					m_type = other.m_type;
+					gaea::graphics::base::operator=(other);
 				}
 
 				return *this;
@@ -84,24 +69,31 @@ namespace gaea {
 				__in_opt bool verbose
 				)
 			{
-				std::stringstream result;
-
-				result << gaea::engine::uid::base::as_string(object, verbose)
-					<< " [" << OBJECT_STRING(object.m_type);
-
-				if(object.m_subtype != OBJECT_SUBTYPE_UNDEFINED) {
-					result << ", " << SCALAR_AS_HEX(uint32_t, object.m_subtype);
-				}
-
-				result << "]";
-
-				return result.str();
+				return gaea::graphics::base::as_string(object, verbose);
 			}
 
-			uint32_t 
-			_base::subtype(void)
+			void 
+			_base::setup(
+				__in const GLvoid *data,
+				__in GLsizeiptr size,
+				__in GLenum target,
+				__in GLenum usage
+				)
 			{
-				return m_subtype;
+				GL_CHECK(glBindBuffer, m_target, m_handle);
+				GL_CHECK(glBufferData, target, size, data, usage);
+			}
+
+			void 
+			_base::start(void)
+			{
+				GL_CHECK(glBindBuffer, m_target, m_handle);
+			}
+
+			void 
+			_base::stop(void)
+			{
+				GL_CHECK(glBindBuffer, m_target, GL_HANDLE_INVALID);
 			}
 
 			std::string 
@@ -109,13 +101,7 @@ namespace gaea {
 				__in_opt bool verbose
 				)
 			{
-				return gaea::engine::object::base::as_string(*this, verbose);
-			}
-
-			gaea::type_t 
-			_base::type(void)
-			{
-				return m_type;
+				return gaea::graphics::vbo::base::as_string(*this, verbose);
 			}
 		}
 	}

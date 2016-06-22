@@ -26,16 +26,19 @@
 #include <glm/gtc/type_ptr.hpp>
 #include <png.h>
 #include <SDL2/SDL.h>
+#include <condition_variable>
 #include <cstdint>
 #include <cstdio>
 #include <cstdlib>
 #include <iomanip>
 #include <iostream>
 #include <map>
+#include <mutex>
 #include <queue>
 #include <set>
 #include <sstream>
 #include <string>
+#include <thread>
 #include <tuple>
 #include <vector>
 
@@ -107,8 +110,8 @@ namespace gaea {
 	#define VERSION_MAJOR 0
 	#define VERSION_MILESTONE "alpha"
 	#define VERSION_MINOR 1
-	#define VERSION_REVISION 6
-	#define VERSION_WEEK 1625
+	#define VERSION_REVISION 2
+	#define VERSION_WEEK 1626
 }
 
 #endif // GAEA_DEFINE_H_

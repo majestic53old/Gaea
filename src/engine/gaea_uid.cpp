@@ -201,7 +201,7 @@ namespace gaea {
 
 			bool 
 			_manager::contains(
-				__in const gaea::uid_t &id
+				__in gaea::uid_t &id
 				)
 			{
 
@@ -214,7 +214,7 @@ namespace gaea {
 
 			size_t 
 			_manager::decrement_reference(
-				__in const gaea::uid_t &id
+				__in gaea::uid_t &id
 				)
 			{
 				size_t result = 0;
@@ -238,7 +238,7 @@ namespace gaea {
 
 			std::map<gaea::uid_t, size_t>::iterator 
 			_manager::find(
-				__in const gaea::uid_t &id
+				__in gaea::uid_t &id
 				)
 			{
 				std::map<gaea::uid_t, size_t>::iterator result;
@@ -281,7 +281,7 @@ namespace gaea {
 
 			size_t 
 			_manager::increment_reference(
-				__in const gaea::uid_t &id
+				__in gaea::uid_t &id
 				)
 			{
 				return ++find(id)->second;
@@ -312,7 +312,7 @@ namespace gaea {
 
 			size_t 
 			_manager::reference_count(
-				__in const gaea::uid_t &id
+				__in gaea::uid_t &id
 				)
 			{
 				return find(id)->second;

@@ -68,8 +68,8 @@ namespace gaea {
 	_manager *_manager::m_instance = nullptr;
 
 	_manager::_manager(void) :
-		m_command_manager(gaea::engine::command::manager::acquire()),
-		m_gl_manager(gaea::graphics::gl::manager::acquire()),
+		m_event_manager(gaea::engine::event::manager::acquire()),
+		m_gfx_manager(gaea::graphics::manager::acquire()),
 		m_initialized(false),
 		m_started(false),
 		m_tick(TICK_INVALID),
@@ -117,11 +117,6 @@ namespace gaea {
 		if(m_initialized) {
 			THROW_GAEA_EXCEPTION(GAEA_EXCEPTION_INITIALIZED);
 		}
-
-		m_uid_manager.initialize();
-		m_command_manager.initialize();
-
-		// TODO: initialize singletons
 
 		m_initialized = true;
 	}
@@ -256,9 +251,11 @@ namespace gaea {
 				SDL_GetError());
 		}
 
-		m_gl_manager.initialize();
+		m_uid_manager.initialize();
+		m_event_manager.initialize();
+		m_gfx_manager.initialize();
 
-		// TODO: initialize gl dep. singletons
+		// TODO: initialize singletons
 	}
 
 	void 
@@ -290,21 +287,17 @@ namespace gaea {
 				switch(event.type) {
 					case SDL_KEYDOWN:
 					case SDL_KEYUP:
-						gaea::engine::command::notify(COMMAND_INPUT_KEYBOARD, COMMAND_SPECIFIER_UNDEFINED,
-							&event.key, sizeof(SDL_KeyboardEvent));
+						// TODO
 						break;
 					case SDL_MOUSEBUTTONDOWN:
 					case SDL_MOUSEBUTTONUP:
-						gaea::engine::command::notify(COMMAND_INPUT_MOUSE_BUTTON, COMMAND_SPECIFIER_UNDEFINED,
-							&event.button, sizeof(SDL_MouseButtonEvent));
+						// TODO
 						break;
 					case SDL_MOUSEMOTION:
-						gaea::engine::command::notify(COMMAND_INPUT_MOUSE_MOTION, COMMAND_SPECIFIER_UNDEFINED,
-							&event.motion, sizeof(SDL_MouseMotionEvent));
+						// TODO
 						break;
 					case SDL_MOUSEWHEEL:
-						gaea::engine::command::notify(COMMAND_INPUT_MOUSE_WHEEL, COMMAND_SPECIFIER_UNDEFINED,
-							&event.wheel, sizeof(SDL_MouseWheelEvent));
+						// TODO
 						break;
 					case SDL_QUIT:
 						stop();
@@ -344,9 +337,11 @@ namespace gaea {
 	void 
 	_manager::teardown(void)
 	{
-		// TODO: uninitialize gl dep. singletons
+		// TODO: uninitialize singletons
 
-		m_gl_manager.uninitialize();
+		m_gfx_manager.uninitialize();
+		m_event_manager.uninitialize();
+		m_uid_manager.uninitialize();
 
 		if(SDL_SetRelativeMouseMode(SDL_FALSE)) {
 			THROW_GAEA_EXCEPTION_FORMAT(GAEA_EXCEPTION_EXTERNAL, "SDL_SetRelativeMouseMode(SDL_FALSE) failed: %s", 
@@ -407,11 +402,6 @@ namespace gaea {
 			}
 
 			m_initialized = false;
-
-			// TODO: uninitialize singletons
-
-			m_command_manager.uninitialize();
-			m_uid_manager.uninitialize();
 		}
 	}
 
@@ -420,8 +410,6 @@ namespace gaea {
 		__in GLfloat delta
 		)
 	{
-		m_command_manager.update(delta);
-
 		// TODO: update
 	}
 }

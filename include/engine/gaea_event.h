@@ -17,32 +17,38 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-#ifndef GAEA_COMMAND_H_
-#define GAEA_COMMAND_H_
+#ifndef GAEA_EVENT_H_
+#define GAEA_EVENT_H_
 
 namespace gaea {
 
-	#define COMMAND_INVALID SCALAR_INVALID(gaea::cmd_type_t)
-	#define COMMAND_MAX COMMAND_INPUT_MOUSE_WHEEL
-	#define COMMAND_SPECIFIER_UNDEFINED SCALAR_INVALID(uint32_t)
+	#define EVENT_INPUT_INVALID EVENT_SPECIFIER_UNDEFINED
+	#define EVENT_INPUT_MAX EVENT_INPUT_WHEEL
+	#define EVENT_INVALID SCALAR_INVALID(gaea::event_t)
+	#define EVENT_MAX EVENT_INPUT
+	#define EVENT_SPECIFIER_UNDEFINED SCALAR_INVALID(uint32_t)
 
 	typedef enum {
-		COMMAND_USER = 0,
-		COMMAND_INPUT_KEYBOARD,
-		COMMAND_INPUT_MOUSE_BUTTON,
-		COMMAND_INPUT_MOUSE_MOTION,
-		COMMAND_INPUT_MOUSE_WHEEL,
-	} cmd_type_t;
+		EVENT_UNDEFINED = 0,
+		EVENT_INPUT,
+	} event_t;
+
+	enum {
+		EVENT_INPUT_BUTTON = 0,
+		EVENT_INPUT_KEY,
+		EVENT_INPUT_MOTION,
+		EVENT_INPUT_WHEEL,
+	};
 
 	namespace engine {
 
-		namespace command {
+		namespace event {
 
-			void notify(
-				__in gaea::cmd_type_t type,
-				__in_opt uint32_t specifier = COMMAND_SPECIFIER_UNDEFINED,
+			void signal(
+				__in gaea::event_t type,
+				__in_opt uint32_t specifier = EVENT_SPECIFIER_UNDEFINED,
 				__in_opt void *context = nullptr,
-				__in_opt uint32_t length = 0
+				__in_opt size_t length = 0
 				);
 
 			typedef class _base :
@@ -51,10 +57,10 @@ namespace gaea {
 				public:
 
 					_base(
-						__in gaea::cmd_type_t type,
-						__in_opt uint32_t specifier = COMMAND_SPECIFIER_UNDEFINED,
+						__in gaea::event_t type,
+						__in_opt uint32_t specifier = EVENT_SPECIFIER_UNDEFINED,
 						__in_opt void *context = nullptr,
-						__in_opt uint32_t length = 0
+						__in_opt size_t length = 0
 						);
 
 					_base(
@@ -72,19 +78,24 @@ namespace gaea {
 						__in_opt bool verbose = false
 						);
 
-					void *context(void);
+					const void *context(void);
 
-					uint32_t length(void);
+					size_t length(void);
 
 					uint32_t specifier(void);
 
-					gaea::cmd_type_t type(void);
-
-					virtual std::string to_string(
+					std::string to_string(
 						__in_opt bool verbose = false
 						);
 
+					gaea::event_t type(void);
+
 				protected:
+
+					void copy(
+						__in void *context,
+						__in size_t length
+						);
 
 					void decrement_reference(void);
 
@@ -92,13 +103,15 @@ namespace gaea {
 
 					void increment_reference(void);
 
-					void *m_context;
-
-					uint32_t m_length;
+					std::vector<uint8_t> m_context;
 
 					uint32_t m_specifier;
 
 			} base;
+
+			typedef void (*handler_cb)(
+				__in gaea::engine::event::base &event
+				);
 
 			typedef class _observer {
 
@@ -106,15 +119,9 @@ namespace gaea {
 
 					// TODO
 
-					virtual std::string to_string(
-						__in_opt bool verbose = false
-						);
-
 				protected:
 
 					// TODO
-
-					std::queue<std::pair<gaea::uid_t, std::tuple<uint32_t, void *, uint32_t, size_t>>> m_entry;
 
 			} observer;
 
@@ -127,26 +134,27 @@ namespace gaea {
 					static _manager &acquire(void);
 
 					bool contains(
-						__in const gaea::uid_t &id,
-						__in gaea::cmd_type_t type
+						__in gaea::uid_t &id,
+						__in gaea::event_t type
+						);
+
+					bool contains(
+						__in gaea::engine::event::handler_cb handler,
+						__in gaea::event_t type
 						);
 
 					size_t decrement_reference(
-						__in const gaea::uid_t &id,
-						__in gaea::cmd_type_t type
+						__in gaea::uid_t &id,
+						__in gaea::event_t type
 						);
 
-					void *generate(
-						__in const gaea::uid_t &id,
-						__in gaea::cmd_type_t type,
-						__in_opt uint32_t specifier = COMMAND_SPECIFIER_UNDEFINED,
-						__in_opt void *context = nullptr,
-						__in_opt uint32_t length = 0
+					void generate(
+						__in gaea::engine::event::base &object
 						);
 
 					size_t increment_reference(
-						__in const gaea::uid_t &id,
-						__in gaea::cmd_type_t type
+						__in gaea::uid_t &id,
+						__in gaea::event_t type
 						);
 
 					void initialize(void);
@@ -156,28 +164,24 @@ namespace gaea {
 					bool is_initialized(void);
 
 					size_t reference_count(
-						__in const gaea::uid_t &id,
-						__in gaea::cmd_type_t type
+						__in gaea::uid_t &id,
+						__in gaea::event_t type
 						);
 
-					void register_observer(
-						__in gaea::engine::command::observer &object,
-						__in gaea::cmd_type_t type
+					void register_handler(
+						__in gaea::engine::event::handler_cb handler,
+						__in gaea::event_t type
 						);
 
 					std::string to_string(
-						__in_opt bool verbose
+						__in_opt bool verbose = false
 						);
 
 					void uninitialize(void);
 
-					void unregister_observer(
-						__in gaea::engine::command::observer &object,
-						__in gaea::cmd_type_t type
-						);
-
-					void update(
-						__in GLfloat delta
+					void unregister_handler(
+						__in gaea::engine::event::handler_cb handler,
+						__in gaea::event_t type
 						);
 
 				protected:
@@ -194,30 +198,37 @@ namespace gaea {
 
 					static void _delete(void);
 
+					static void _thread(void);
+
 					void clear(void);
 
-					void destroy(
-						__in const std::map<gaea::uid_t, std::tuple<uint32_t, void *, uint32_t, size_t>>::iterator &entry
+					std::map<gaea::uid_t, std::pair<gaea::engine::event::base, size_t>>::iterator find(
+						__in gaea::uid_t &id,
+						__in gaea::event_t type
 						);
 
-					std::map<gaea::uid_t, std::tuple<uint32_t, void *, uint32_t, size_t>>::iterator find(
-						__in const gaea::uid_t &id,
-						__in gaea::cmd_type_t type
+					std::set<gaea::engine::event::handler_cb>::iterator find(
+						__in gaea::engine::event::handler_cb handler,
+						__in gaea::event_t type
 						);
 
-					std::vector<std::map<gaea::uid_t, std::tuple<uint32_t, void *, uint32_t, size_t>>> m_entry;
+					std::vector<std::map<gaea::uid_t, std::pair<gaea::engine::event::base, size_t>>> m_entry;
 
 					std::vector<std::queue<gaea::uid_t>> m_entry_queue;
+
+					std::vector<std::set<gaea::engine::event::handler_cb>> m_handler;
 
 					bool m_initialized;
 
 					static _manager *m_instance;
 
-					std::vector<std::set<gaea::engine::command::observer *>> m_observer;
+					gaea::engine::signal::base m_signal;
+
+					std::thread m_thread;
 
 			} manager;
 		}
 	}
 }
 
-#endif // GAEA_COMMAND_H_
+#endif // GAEA_EVENT_H_

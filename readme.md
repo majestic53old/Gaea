@@ -12,6 +12,12 @@ Table of Contents
 Changelog
 =========
 
+###Version 0.1.1626
+*Updated: 6/21/2016*
+
+* Added event base/observer/manager class
+* Added signal base class
+
 ###Version 0.1.1625
 *Updated: 6/19/2016*
 

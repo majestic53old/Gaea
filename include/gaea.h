@@ -25,15 +25,16 @@
 #include "gaea_define.h"
 #include "gaea_exception.h"
 #include "engine/gaea_uid.h"
+#include "engine/gaea_signal.h"
 #include "engine/gaea_object.h"
-#include "engine/gaea_command.h"
-#include "graphics/gl/gaea_gl.h"
-#include "graphics/gl/gaea_vbo.h"
-#include "graphics/gl/gaea_vao.h"
-#include "graphics/gl/gaea_shader.h"
-#include "graphics/gl/gaea_program.h"
-#include "graphics/gl/gaea_texture.h"
-#include "graphics/gl/gaea_cubemap.h"
+#include "engine/gaea_event.h"
+#include "graphics/gaea_gl.h"
+#include "graphics/gaea_vbo.h"
+#include "graphics/gaea_vao.h"
+#include "graphics/gaea_shader.h"
+#include "graphics/gaea_program.h"
+#include "graphics/gaea_texture.h"
+#include "graphics/gaea_cubemap.h"
 
 namespace gaea {
 
@@ -108,9 +109,9 @@ namespace gaea {
 				__in GLfloat delta
 				);
 
-			gaea::engine::command::manager &m_command_manager;
+			gaea::engine::event::manager &m_event_manager;
 
-			gaea::graphics::gl::manager &m_gl_manager;
+			gaea::graphics::manager &m_gfx_manager;
 
 			bool m_initialized;
 

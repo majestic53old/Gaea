@@ -24,56 +24,53 @@ namespace gaea {
 
 	namespace graphics {
 
-		namespace gl {
+		namespace vbo {
 
-			namespace vbo {
+			typedef class _base :
+					public gaea::graphics::base {
 
-				typedef class _base :
-						public gaea::graphics::gl::base {
+				public:
 
-					public:
+					_base(
+						__in const GLvoid *data,
+						__in GLsizeiptr size,
+						__in GLenum target,
+						__in GLenum usage
+						);
 
-						_base(
-							__in const GLvoid *data,
-							__in GLsizeiptr size,
-							__in GLenum target,
-							__in GLenum usage
-							);
+					_base(
+						__in const _base &other
+						);
 
-						_base(
-							__in const _base &other
-							);
+					virtual ~_base(void);
 
-						virtual ~_base(void);
+					_base &operator=(
+						__in const _base &other
+						);
 
-						_base &operator=(
-							__in const _base &other
-							);
+					static std::string as_string(
+						__in const _base &object,
+						__in_opt bool verbose = false
+						);
 
-						static std::string as_string(
-							__in const _base &object,
-							__in_opt bool verbose = false
-							);
+					void start(void);
 
-						void start(void);
+					void stop(void);
 
-						void stop(void);
+					virtual std::string to_string(
+						__in_opt bool verbose = false
+						);
 
-						virtual std::string to_string(
-							__in_opt bool verbose = false
-							);
+				public:
 
-					public:
+					void setup(
+						__in const GLvoid *data,
+						__in GLsizeiptr size,
+						__in GLenum target,
+						__in GLenum usage
+						);
 
-						void setup(
-							__in const GLvoid *data,
-							__in GLsizeiptr size,
-							__in GLenum target,
-							__in GLenum usage
-							);
-
-				} base;
-			}
+			} base;
 		}
 	}
 }

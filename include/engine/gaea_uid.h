@@ -96,11 +96,11 @@ namespace gaea {
 					static _manager &acquire(void);
 
 					bool contains(
-						__in const gaea::uid_t &id
+						__in gaea::uid_t &id
 						);
 
 					size_t decrement_reference(
-						__in const gaea::uid_t &id
+						__in gaea::uid_t &id
 						);
 
 					void generate(
@@ -108,7 +108,7 @@ namespace gaea {
 						);
 
 					size_t increment_reference(
-						__in const gaea::uid_t &id
+						__in gaea::uid_t &id
 						);
 
 					void initialize(void);
@@ -118,7 +118,7 @@ namespace gaea {
 					bool is_initialized(void);
 
 					size_t reference_count(
-						__in const gaea::uid_t &id
+						__in gaea::uid_t &id
 						);
 
 					size_t size(void);
@@ -146,7 +146,7 @@ namespace gaea {
 					void clear(void);
 
 					std::map<gaea::uid_t, size_t>::iterator find(
-						__in const gaea::uid_t &id
+						__in gaea::uid_t &id
 						);
 
 					std::map<gaea::uid_t, size_t> m_entry;
