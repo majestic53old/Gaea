@@ -13,7 +13,7 @@ Changelog
 =========
 
 ###Version 0.1.1626
-*Updated: 6/21/2016*
+*Updated: 6/21-22/2016*
 
 * Added event base/observer/manager class
 * Added signal base class

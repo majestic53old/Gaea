@@ -252,8 +252,8 @@ namespace gaea {
 		}
 
 		m_uid_manager.initialize();
-		m_event_manager.initialize();
 		m_gfx_manager.initialize();
+		m_event_manager.initialize();
 
 		// TODO: initialize singletons
 	}
@@ -287,17 +287,21 @@ namespace gaea {
 				switch(event.type) {
 					case SDL_KEYDOWN:
 					case SDL_KEYUP:
-						// TODO
+						gaea::engine::event::notify(EVENT_INPUT, EVENT_INPUT_KEY,
+							&event.key, sizeof(SDL_KeyboardEvent));
 						break;
 					case SDL_MOUSEBUTTONDOWN:
 					case SDL_MOUSEBUTTONUP:
-						// TODO
+						gaea::engine::event::notify(EVENT_INPUT, EVENT_INPUT_BUTTON,
+							&event.button, sizeof(SDL_MouseButtonEvent));
 						break;
 					case SDL_MOUSEMOTION:
-						// TODO
+						gaea::engine::event::notify(EVENT_INPUT, EVENT_INPUT_MOTION,
+							&event.motion, sizeof(SDL_MouseMotionEvent));
 						break;
 					case SDL_MOUSEWHEEL:
-						// TODO
+						gaea::engine::event::notify(EVENT_INPUT, EVENT_INPUT_WHEEL,
+							&event.wheel, sizeof(SDL_MouseWheelEvent));
 						break;
 					case SDL_QUIT:
 						stop();
@@ -337,6 +341,7 @@ namespace gaea {
 	void 
 	_manager::teardown(void)
 	{
+
 		// TODO: uninitialize singletons
 
 		m_gfx_manager.uninitialize();

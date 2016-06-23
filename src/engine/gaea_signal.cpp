@@ -27,9 +27,9 @@ namespace gaea {
 		namespace signal {
 
 			_base::_base(
-				__in_opt bool signaled
+				__in_opt bool notified
 				) :
-					m_signaled(signaled)
+					m_notified(notified)
 			{
 				return;
 			}
@@ -37,7 +37,7 @@ namespace gaea {
 			_base::_base(
 				__in _base &other
 				) :
-					m_signaled(other.m_signaled)
+					m_notified(other.m_notified)
 			{
 				return;
 			}
@@ -54,7 +54,7 @@ namespace gaea {
 			{
 
 				if(this != &other) {
-					m_signaled = other.m_signaled;
+					m_notified = other.m_notified;
 				}
 
 				return *this;
@@ -68,7 +68,7 @@ namespace gaea {
 			{
 				std::stringstream result;
 
-				result << (object.m_signaled ? "SIGNALED" : "CLEAR");
+				result << (object.m_notified ? "NOTIFIED" : "CLEAR");
 
 				return result.str();
 			}
@@ -78,22 +78,22 @@ namespace gaea {
 			{
 				std::lock_guard<std::mutex> lock(m_mutex);
 
-				m_signaled = false;
+				m_notified = false;
 				m_condition.notify_all();
 			}
 
 			bool 
-			_base::is_signaled(void)
+			_base::is_notified(void)
 			{
-				return m_signaled;
+				return m_notified;
 			}
 
 			void 
-			_base::signal(void)
+			_base::notify(void)
 			{
 				std::lock_guard<std::mutex> lock(m_mutex);
 
-				m_signaled = true;
+				m_notified = true;
 				m_condition.notify_all();
 			}
 
@@ -110,8 +110,8 @@ namespace gaea {
 			{
 				std::unique_lock<std::mutex> lock(m_mutex);
 
-				m_condition.wait(lock, [this] { return m_signaled; });
-				m_signaled = false;
+				m_condition.wait(lock, [this] { return m_notified; });
+				m_notified = false;
 			}
 		}
 	}

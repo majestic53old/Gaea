@@ -22,8 +22,6 @@
 
 namespace gaea {
 
-	#define SIGNAL_INIT false
-
 	namespace engine {
 
 		namespace signal {
@@ -33,7 +31,7 @@ namespace gaea {
 				public:
 
 					_base(
-						__in_opt bool signaled = SIGNAL_INIT
+						__in_opt bool notified = false
 						);
 
 					_base(
@@ -53,11 +51,11 @@ namespace gaea {
 
 					void clear(void);
 
-					bool is_signaled(void);
+					bool is_notified(void);
 
-					void signal(void);
+					void notify(void);
 
-					std::string to_string(
+					virtual std::string to_string(
 						__in_opt bool verbose = false
 						);
 
@@ -69,7 +67,7 @@ namespace gaea {
 
 					std::mutex m_mutex;
 
-					bool m_signaled;
+					bool m_notified;
 
 			} base;
 		}

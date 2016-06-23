@@ -44,7 +44,7 @@ namespace gaea {
 
 		namespace event {
 
-			void signal(
+			void notify(
 				__in gaea::event_t type,
 				__in_opt uint32_t specifier = EVENT_SPECIFIER_UNDEFINED,
 				__in_opt void *context = nullptr,
@@ -58,9 +58,8 @@ namespace gaea {
 
 					_base(
 						__in gaea::event_t type,
-						__in_opt uint32_t specifier = EVENT_SPECIFIER_UNDEFINED,
-						__in_opt void *context = nullptr,
-						__in_opt size_t length = 0
+						__in uint32_t specifier,
+						__in std::vector<uint8_t> &context
 						);
 
 					_base(
@@ -82,9 +81,13 @@ namespace gaea {
 
 					size_t length(void);
 
+					void set(
+						__in std::vector<uint8_t> &context
+						);
+
 					uint32_t specifier(void);
 
-					std::string to_string(
+					virtual std::string to_string(
 						__in_opt bool verbose = false
 						);
 
@@ -92,14 +95,7 @@ namespace gaea {
 
 				protected:
 
-					void copy(
-						__in void *context,
-						__in size_t length
-						);
-
 					void decrement_reference(void);
-
-					void generate(void);
 
 					void increment_reference(void);
 
@@ -117,11 +113,51 @@ namespace gaea {
 
 				public:
 
-					// TODO
+					_observer(void);
+
+					_observer(
+						__in const _observer &other
+						);
+
+					virtual ~_observer(void);
+
+					_observer &operator=(
+						__in const _observer &other
+						);
+
+					static std::string as_string(
+						__in const _observer &object,
+						__in_opt bool verbose = false
+						);
+
+					bool is_handler_registered(
+						__in gaea::event_t type
+						);
+
+					void register_handler(
+						__in gaea::engine::event::handler_cb handler,
+						__in gaea::event_t type
+						);
+
+					size_t size(void);
+
+					virtual std::string to_string(
+						__in_opt bool verbose = false
+						);
+
+					void unregister_all_handlers(void);
+
+					void unregister_handler(
+						__in gaea::event_t type
+						);
 
 				protected:
 
-					// TODO
+					std::map<gaea::event_t, gaea::engine::event::handler_cb>::iterator find(
+						__in gaea::event_t type
+						);
+
+					std::map<gaea::event_t, gaea::engine::event::handler_cb> m_handler;
 
 			} observer;
 
@@ -133,27 +169,30 @@ namespace gaea {
 
 					static _manager &acquire(void);
 
-					bool contains(
-						__in gaea::uid_t &id,
+					bool contains_event(
+						__in gaea::uid_t id,
 						__in gaea::event_t type
 						);
 
-					bool contains(
+					bool contains_handler(
 						__in gaea::engine::event::handler_cb handler,
 						__in gaea::event_t type
 						);
 
 					size_t decrement_reference(
-						__in gaea::uid_t &id,
+						__in gaea::uid_t id,
 						__in gaea::event_t type
 						);
 
-					void generate(
-						__in gaea::engine::event::base &object
+					gaea::uid_t generate(
+						__in gaea::event_t type,
+						__in_opt uint32_t specifier = EVENT_SPECIFIER_UNDEFINED,
+						__in_opt void *context = nullptr,
+						__in_opt size_t length = 0
 						);
 
 					size_t increment_reference(
-						__in gaea::uid_t &id,
+						__in gaea::uid_t id,
 						__in gaea::event_t type
 						);
 
@@ -164,7 +203,7 @@ namespace gaea {
 					bool is_initialized(void);
 
 					size_t reference_count(
-						__in gaea::uid_t &id,
+						__in gaea::uid_t id,
 						__in gaea::event_t type
 						);
 
@@ -202,19 +241,19 @@ namespace gaea {
 
 					void clear(void);
 
-					std::map<gaea::uid_t, std::pair<gaea::engine::event::base, size_t>>::iterator find(
-						__in gaea::uid_t &id,
+					std::map<gaea::uid_t, std::pair<gaea::engine::event::base, size_t>>::iterator find_event(
+						__in gaea::uid_t id,
 						__in gaea::event_t type
 						);
 
-					std::set<gaea::engine::event::handler_cb>::iterator find(
+					std::set<gaea::engine::event::handler_cb>::iterator find_handler(
 						__in gaea::engine::event::handler_cb handler,
 						__in gaea::event_t type
 						);
 
-					std::vector<std::map<gaea::uid_t, std::pair<gaea::engine::event::base, size_t>>> m_entry;
+					std::vector<std::map<gaea::uid_t, std::pair<gaea::engine::event::base, size_t>>> m_event;
 
-					std::vector<std::queue<gaea::uid_t>> m_entry_queue;
+					std::vector<std::queue<gaea::uid_t>> m_event_queue;
 
 					std::vector<std::set<gaea::engine::event::handler_cb>> m_handler;
 
