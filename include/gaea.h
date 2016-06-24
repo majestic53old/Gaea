@@ -35,6 +35,7 @@
 #include "graphics/gaea_program.h"
 #include "graphics/gaea_texture.h"
 #include "graphics/gaea_cubemap.h"
+#include "engine/gaea_entity.h"
 
 namespace gaea {
 

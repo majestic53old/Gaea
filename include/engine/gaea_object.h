@@ -23,12 +23,13 @@
 namespace gaea {
 
 	#define OBJECT_INVALID SCALAR_INVALID(gaea::type_t)
-	#define OBJECT_MAX OBJECT_GL
+	#define OBJECT_MAX OBJECT_GRAPHIC
 	#define OBJECT_SUBTYPE_UNDEFINED SCALAR_INVALID(uint32_t)
 
 	typedef enum {
-		OBJECT_EVENT = 0,
-		OBJECT_GL,
+		OBJECT_ENTITY = 0,
+		OBJECT_EVENT,
+		OBJECT_GRAPHIC,
 	} type_t;
 
 	namespace engine {

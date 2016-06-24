@@ -13,6 +13,10 @@ Changelog
 =========
 
 ###Version 0.1.1626
+*Updated: 6/23/2016*
+
+* Added entity base/manager class
+
 *Updated: 6/21-22/2016*
 
 * Added event base/observer/manager class

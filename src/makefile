@@ -33,9 +33,10 @@ all: build archive
 archive:
 	@echo ''
 	@echo '--- BUILDING LIBRARY -----------------------'
-	ar rcs $(DIR_BIN)$(LIB) $(DIR_BUILD)gaea.o $(DIR_BUILD)gaea_cubemap.o $(DIR_BUILD)gaea_event.o $(DIR_BUILD)gaea_exception.o \
-		$(DIR_BUILD)gaea_gl.o $(DIR_BUILD)gaea_object.o $(DIR_BUILD)gaea_program.o $(DIR_BUILD)gaea_shader.o $(DIR_BUILD)gaea_signal.o \
-		$(DIR_BUILD)gaea_texture.o $(DIR_BUILD)gaea_uid.o $(DIR_BUILD)gaea_vao.o $(DIR_BUILD)gaea_vbo.o
+	ar rcs $(DIR_BIN)$(LIB) $(DIR_BUILD)gaea.o $(DIR_BUILD)gaea_cubemap.o $(DIR_BUILD)gaea_entity.o $(DIR_BUILD)gaea_event.o \
+		$(DIR_BUILD)gaea_exception.o $(DIR_BUILD)gaea_gl.o $(DIR_BUILD)gaea_object.o $(DIR_BUILD)gaea_program.o \
+		$(DIR_BUILD)gaea_shader.o $(DIR_BUILD)gaea_signal.o $(DIR_BUILD)gaea_texture.o $(DIR_BUILD)gaea_uid.o \
+		$(DIR_BUILD)gaea_vao.o $(DIR_BUILD)gaea_vbo.o
 	@echo '--- DONE -----------------------------------'
 	@echo ''
 
@@ -53,7 +54,10 @@ gaea_exception.o: $(DIR_SRC)gaea_exception.cpp $(DIR_INC)gaea_exception.h
 
 ### ENGINE ###
 
-build_engine: gaea_event.o gaea_object.o gaea_signal.o gaea_uid.o
+build_engine: gaea_entity.o gaea_event.o gaea_object.o gaea_signal.o gaea_uid.o
+
+gaea_entity.o: $(DIR_SRC_ENG)gaea_entity.cpp $(DIR_INC_ENG)gaea_entity.h
+	$(CC) $(CC_FLAGS) -c $(DIR_SRC_ENG)gaea_entity.cpp -o $(DIR_BUILD)gaea_entity.o
 
 gaea_event.o: $(DIR_SRC_ENG)gaea_event.cpp $(DIR_INC_ENG)gaea_event.h
 	$(CC) $(CC_FLAGS) -c $(DIR_SRC_ENG)gaea_event.cpp -o $(DIR_BUILD)gaea_event.o

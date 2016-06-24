@@ -43,7 +43,7 @@ namespace gaea {
 			__in gaea::gl_t type,
 			__in_opt GLenum target
 			) :
-				gaea::engine::object::base(OBJECT_GL, type),
+				gaea::engine::object::base(OBJECT_GRAPHIC, type),
 				m_handle(GL_HANDLE_INVALID),
 				m_target(target)
 		{
