@@ -42,7 +42,7 @@ exe:
 	@echo '============================================'
 	@echo 'BUILDING EXECUTABLES'
 	@echo '============================================'
-	cd $(DIR_EXE) && make
+	cd $(DIR_EXE) && make FLAGS_EXT=$(FLAGS_EXT)
 
 init:
 	mkdir $(DIR_BIN)
@@ -54,7 +54,7 @@ lib:
 	@echo '============================================'
 	@echo 'BUILDING LIBRARIES'
 	@echo '============================================'
-	cd $(DIR_SRC) && make build -j $(JOB_SLOTS)
+	cd $(DIR_SRC) && make FLAGS_EXT=$(FLAGS_EXT) build -j $(JOB_SLOTS)
 	cd $(DIR_SRC) && make archive
 
 ### TESTING ###

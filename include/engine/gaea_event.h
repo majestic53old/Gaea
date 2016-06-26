@@ -22,7 +22,7 @@
 
 namespace gaea {
 
-	#define EVENT_INPUT_INVALID EVENT_SPECIFIER_UNDEFINED
+	#define EVENT_CAMERA_MAX EVENT_CAMERA_UP_SET
 	#define EVENT_INPUT_MAX EVENT_INPUT_WHEEL
 	#define EVENT_INVALID SCALAR_INVALID(gaea::event_t)
 	#define EVENT_MAX EVENT_INPUT
@@ -30,8 +30,21 @@ namespace gaea {
 
 	typedef enum {
 		EVENT_UNDEFINED = 0,
+		EVENT_CAMERA,
 		EVENT_INPUT,
 	} event_t;
+
+	enum {
+		EVENT_CAMERA_CLIP_SET = 0,
+		EVENT_CAMERA_DIMENSIONS_SET,
+		EVENT_CAMERA_FOV_SET,
+		EVENT_CAMERA_POSITION_DELTA,
+		EVENT_CAMERA_POSITION_SET,
+		EVENT_CAMERA_ROTATION_DELTA,
+		EVENT_CAMERA_ROTATION_SET,
+		EVENT_CAMERA_UP_DELTA,
+		EVENT_CAMERA_UP_SET,
+	};
 
 	enum {
 		EVENT_INPUT_BUTTON = 0,
@@ -106,7 +119,8 @@ namespace gaea {
 			} base;
 
 			typedef void (*handler_cb)(
-				__in gaea::engine::event::base &event
+				__in gaea::engine::event::base &event,
+				__in void *context
 				);
 
 			typedef class _observer {
@@ -136,7 +150,8 @@ namespace gaea {
 
 					void register_handler(
 						__in gaea::engine::event::handler_cb handler,
-						__in gaea::event_t type
+						__in gaea::event_t type,
+						__in_opt void *context = nullptr
 						);
 
 					size_t size(void);
@@ -153,11 +168,11 @@ namespace gaea {
 
 				protected:
 
-					std::map<gaea::event_t, gaea::engine::event::handler_cb>::iterator find(
+					std::map<gaea::event_t, std::pair<gaea::engine::event::handler_cb, void *>>::iterator find(
 						__in gaea::event_t type
 						);
 
-					std::map<gaea::event_t, gaea::engine::event::handler_cb> m_handler;
+					std::map<gaea::event_t, std::pair<gaea::engine::event::handler_cb, void *>> m_handler;
 
 			} observer;
 
@@ -176,7 +191,8 @@ namespace gaea {
 
 					bool contains_handler(
 						__in gaea::engine::event::handler_cb handler,
-						__in gaea::event_t type
+						__in gaea::event_t type,
+						__in_opt void *context = nullptr
 						);
 
 					size_t decrement_reference(
@@ -209,7 +225,8 @@ namespace gaea {
 
 					void register_handler(
 						__in gaea::engine::event::handler_cb handler,
-						__in gaea::event_t type
+						__in gaea::event_t type,
+						__in_opt void *context = nullptr
 						);
 
 					std::string to_string(
@@ -220,7 +237,8 @@ namespace gaea {
 
 					void unregister_handler(
 						__in gaea::engine::event::handler_cb handler,
-						__in gaea::event_t type
+						__in gaea::event_t type,
+						__in_opt void *context = nullptr
 						);
 
 				protected:
@@ -246,20 +264,23 @@ namespace gaea {
 						__in gaea::event_t type
 						);
 
-					std::set<gaea::engine::event::handler_cb>::iterator find_handler(
+					std::set<std::pair<gaea::engine::event::handler_cb, void *>>::iterator find_handler(
 						__in gaea::engine::event::handler_cb handler,
-						__in gaea::event_t type
+						__in gaea::event_t type,
+						__in_opt void *context = nullptr
 						);
 
 					std::vector<std::map<gaea::uid_t, std::pair<gaea::engine::event::base, size_t>>> m_event;
 
 					std::vector<std::queue<gaea::uid_t>> m_event_queue;
 
-					std::vector<std::set<gaea::engine::event::handler_cb>> m_handler;
+					std::vector<std::set<std::pair<gaea::engine::event::handler_cb, void *>>> m_handler;
 
 					bool m_initialized;
 
 					static _manager *m_instance;
+
+					std::recursive_mutex m_lock;
 
 					gaea::engine::signal::base m_signal;
 

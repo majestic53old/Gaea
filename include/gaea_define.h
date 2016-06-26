@@ -65,6 +65,8 @@ namespace gaea {
 
 	#define BYTES_PER_KBYTE 1024
 
+	#define DIRECTION_UP 1.f
+
 #ifndef NDEBUG
 	#define _GL_ERROR_CHECK { \
 		GLenum result = glGetError(); \
@@ -110,7 +112,7 @@ namespace gaea {
 	#define VERSION_MAJOR 0
 	#define VERSION_MILESTONE "alpha"
 	#define VERSION_MINOR 1
-	#define VERSION_REVISION 4
+	#define VERSION_REVISION 5
 	#define VERSION_WEEK 1626
 }
 

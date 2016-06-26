@@ -13,6 +13,12 @@ Changelog
 =========
 
 ###Version 0.1.1626
+*Updated: 6/24/2016*
+
+* Added camera base/manager class
+* Added camera event to event manager class
+* Fixed a threading issue in the event manager
+
 *Updated: 6/23/2016*
 
 * Added entity base/manager class

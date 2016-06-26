@@ -36,6 +36,7 @@
 #include "graphics/gaea_texture.h"
 #include "graphics/gaea_cubemap.h"
 #include "engine/gaea_entity.h"
+#include "engine/gaea_camera.h"
 
 namespace gaea {
 
@@ -109,6 +110,10 @@ namespace gaea {
 			void update(
 				__in GLfloat delta
 				);
+
+			gaea::engine::camera::manager &m_camera_manager;
+
+			gaea::engine::entity::manager &m_entity_manager;
 
 			gaea::engine::event::manager &m_event_manager;
 

@@ -22,9 +22,10 @@
 
 namespace gaea {
 
-	#define ENTITY_INVALID SCALAR_INVALID(gaea::entity_t)
+	#define ENTITY_ALL SCALAR_INVALID(gaea::entity_t)
 	#define ENTITY_MAX ENTITY_CAMERA
 	#define ENTITY_SPECIFIER_UNDEFINED SCALAR_INVALID(uint32_t)
+	#define ENTITY_VISIBLE_INIT true
 
 	typedef enum {
 		ENTITY_CAMERA = 0,
@@ -35,13 +36,15 @@ namespace gaea {
 		namespace entity {
 
 			typedef class _base :
-					gaea::engine::object::base {
+					public gaea::engine::object::base,
+					public gaea::engine::event::observer {
 
 				public:
 
 					_base(
 						__in gaea::entity_t type,
-						__in_opt uint32_t specifier = ENTITY_SPECIFIER_UNDEFINED
+						__in_opt uint32_t specifier = ENTITY_SPECIFIER_UNDEFINED,
+						__in_opt bool visible = ENTITY_VISIBLE_INIT
 						);
 
 					_base(
@@ -59,6 +62,8 @@ namespace gaea {
 						__in_opt bool verbose = false
 						);
 
+					bool is_visible(void);
+
 					virtual void render(void) = 0;
 
 					uint32_t specifier(void);
@@ -73,9 +78,15 @@ namespace gaea {
 						__in GLfloat delta
 						) = 0;
 
+					void visible(
+						__in bool value
+						);
+
 				protected:
 
 					uint32_t m_specifier;
+
+					bool m_visible;
 
 			} base;
 
@@ -117,14 +128,13 @@ namespace gaea {
 						__in gaea::entity_t type
 						);
 
-					void render(
-						__in gaea::entity_t type,
-						__in_opt uint32_t specifier = ENTITY_SPECIFIER_UNDEFINED
-						);
-
-					void render_all(void);
+					void render(void);
 
 					size_t size(void);
+
+					size_t size(
+						__in gaea::entity_t type
+						);
 
 					std::string to_string(
 						__in_opt bool verbose = false
@@ -133,12 +143,6 @@ namespace gaea {
 					void uninitialize(void);
 
 					void update(
-						__in GLfloat delta,
-						__in gaea::entity_t type,
-						__in_opt uint32_t specifier = ENTITY_SPECIFIER_UNDEFINED
-						);
-
-					void update_all(
 						__in GLfloat delta
 						);
 

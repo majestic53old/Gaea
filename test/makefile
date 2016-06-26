@@ -16,7 +16,7 @@
 # along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 CC=clang++
-CC_FLAGS=-march=native -std=gnu++11 -O3 -Wall -Werror
+CC_FLAGS=-march=native -std=gnu++11 -g -Wall -Werror
 CC_FLAGS_EXT=-lGL -lGLU -lGLEW -lSDL2 -lSDL2main -lpng -pthread
 DIR_BIN=./../bin/
 DIR_BUILD=./../build/
@@ -32,6 +32,6 @@ all: exe
 exe:
 	@echo ''
 	@echo '--- BUILDING TOOL --------------------------' 
-	$(CC) $(CC_FLAGS) $(CC_FLAGS_EXT) main.cpp $(DIR_BIN)$(LIB) -o $(DIR_BIN)$(EXE)
+	$(CC) $(CC_FLAGS) $(CC_FLAGS_EXT) $(FLAGS_EXT) main.cpp $(DIR_BIN)$(LIB) -o $(DIR_BIN)$(EXE)
 	@echo '--- DONE -----------------------------------'
 	@echo ''

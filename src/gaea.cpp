@@ -68,6 +68,8 @@ namespace gaea {
 	_manager *_manager::m_instance = nullptr;
 
 	_manager::_manager(void) :
+		m_camera_manager(gaea::engine::camera::manager::acquire()),
+		m_entity_manager(gaea::engine::entity::manager::acquire()),
 		m_event_manager(gaea::engine::event::manager::acquire()),
 		m_gfx_manager(gaea::graphics::manager::acquire()),
 		m_initialized(false),
@@ -144,9 +146,7 @@ namespace gaea {
 	{
 		GL_CHECK(glClearColor, GL_CHAN_RED, GL_CHAN_GREEN, GL_CHAN_BLUE, GL_CHAN_ALPHA);
 		GL_CHECK(glClear, GL_CLEAR_FLAGS);
-
-		// TODO: render
-
+		m_entity_manager.render();
 		SDL_GL_SwapWindow(m_window);
 	}
 
@@ -252,10 +252,13 @@ namespace gaea {
 		}
 
 		m_uid_manager.initialize();
-		m_gfx_manager.initialize();
 		m_event_manager.initialize();
+		m_gfx_manager.initialize();
+		m_entity_manager.initialize();
 
 		// TODO: initialize singletons
+
+		m_camera_manager.initialize(dimensions);
 	}
 
 	void 
@@ -287,6 +290,14 @@ namespace gaea {
 				switch(event.type) {
 					case SDL_KEYDOWN:
 					case SDL_KEYUP:
+
+#ifndef NDEBUG
+						if((event.type == SDL_KEYUP) 
+								&& (event.key.keysym.scancode == SDL_SCANCODE_ESCAPE)) {
+							stop();
+						}
+#endif // NDEEBUG
+
 						gaea::engine::event::notify(EVENT_INPUT, EVENT_INPUT_KEY,
 							&event.key, sizeof(SDL_KeyboardEvent));
 						break;
@@ -341,9 +352,11 @@ namespace gaea {
 	void 
 	_manager::teardown(void)
 	{
+		m_camera_manager.uninitialize();
 
 		// TODO: uninitialize singletons
 
+		m_entity_manager.uninitialize();		
 		m_gfx_manager.uninitialize();
 		m_event_manager.uninitialize();
 		m_uid_manager.uninitialize();
@@ -415,6 +428,6 @@ namespace gaea {
 		__in GLfloat delta
 		)
 	{
-		// TODO: update
+		m_entity_manager.update(delta);
 	}
 }

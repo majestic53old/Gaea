@@ -32,12 +32,21 @@ namespace gaea {
 				((_TYPE_) > EVENT_MAX ? STRING_UNKNOWN : \
 				STRING_CHECK(EVENT_STR[_TYPE_]))
 
+			#define EVENT_CAMERA_STRING(_TYPE_) \
+				((_TYPE_) > EVENT_CAMERA_MAX ? STRING_UNKNOWN : \
+				STRING_CHECK(EVENT_CAMERA_STR[_TYPE_]))
+
 			#define EVENT_INPUT_STRING(_TYPE_) \
 				((_TYPE_) > EVENT_INPUT_MAX ? STRING_UNKNOWN : \
 				STRING_CHECK(EVENT_INPUT_STR[_TYPE_]))
 
 			static const std::string EVENT_STR[] = {
-				"UNDEFINED", "INPUT",
+				"UNDEFINED", "ENGINE", "INPUT",
+				};
+
+			static const std::string EVENT_CAMERA_STR[] = {
+				"CLIP", "DIMENSIONS", "FOV", "POSITION DELTA", "POSITION",
+				"ROTATION DELTA", "ROTATION", "UP DELTA", "UP",
 				};
 
 			static const std::string EVENT_INPUT_STR[] = {
@@ -121,6 +130,9 @@ namespace gaea {
 					result << ", ";
 
 					switch(object.m_subtype) {
+						case EVENT_CAMERA:
+							result << EVENT_CAMERA_STRING(object.m_specifier);
+							break;
 						case EVENT_INPUT:
 							result << EVENT_INPUT_STRING(object.m_specifier);
 							break;
@@ -241,7 +253,7 @@ namespace gaea {
 				)
 			{
 				std::stringstream result;
-				std::map<gaea::event_t, gaea::engine::event::handler_cb>::const_iterator iter;
+				std::map<gaea::event_t, std::pair<gaea::engine::event::handler_cb, void *>>::const_iterator iter;
 
 				result << "OBS[" << object.m_handler.size() << "]";
 
@@ -251,11 +263,12 @@ namespace gaea {
 					for(iter = object.m_handler.begin(); iter != object.m_handler.end(); ++iter) {
 
 						if(iter != object.m_handler.begin()) {
-							result << ", ";
+							result << "; ";
 						}
 
 						result << EVENT_STRING(iter->first)
-							<< " (" << SCALAR_AS_HEX(uintptr_t, iter->second) << ")";
+							<< " (" << SCALAR_AS_HEX(uintptr_t, iter->second.first)
+							<< ", CONT=" << SCALAR_AS_HEX(uintptr_t, iter->second.second) << ")";
 					}
 
 					result << "}";
@@ -264,12 +277,12 @@ namespace gaea {
 				return result.str();
 			}
 
-			std::map<gaea::event_t, gaea::engine::event::handler_cb>::iterator 
+			std::map<gaea::event_t, std::pair<gaea::engine::event::handler_cb, void *>>::iterator 
 			_observer::find(
 				__in gaea::event_t type
 				)
 			{
-				std::map<gaea::event_t, gaea::engine::event::handler_cb>::iterator result;
+				std::map<gaea::event_t, std::pair<gaea::engine::event::handler_cb, void *>>::iterator result;
 
 				if(type > EVENT_MAX) {
 					THROW_GAEA_EVENT_EXCEPTION_FORMAT(GAEA_EVENT_EXCEPTION_INVALID_TYPE,
@@ -302,7 +315,8 @@ namespace gaea {
 			void 
 			_observer::register_handler(
 				__in gaea::engine::event::handler_cb handler,
-				__in gaea::event_t type
+				__in gaea::event_t type,
+				__in_opt void *context
 				)
 			{
 
@@ -318,19 +332,20 @@ namespace gaea {
 
 				if(m_handler.find(type) != m_handler.end()) {
 					THROW_GAEA_EVENT_EXCEPTION_FORMAT(GAEA_EVENT_EXCEPTION_REGISTERED,
-						"[%s (%x)] %p", EVENT_STRING(type), type, handler);
+						"[%s (%x)] %p(%p)", EVENT_STRING(type), type, handler, context);
 				}
 
 				if(gaea::engine::event::manager::is_allocated()) {
 
 					gaea::engine::event::manager &instance = gaea::engine::event::manager::acquire();
 					if(instance.is_initialized() 
-							&& !instance.contains_handler(handler, type)) {
-						instance.register_handler(handler, type);
+							&& !instance.contains_handler(handler, type, context)) {
+						instance.register_handler(handler, type, context);
 					}
 				}
 
-				m_handler.insert(std::pair<gaea::event_t, gaea::engine::event::handler_cb>(type, handler));
+				m_handler.insert(std::pair<gaea::event_t, std::pair<gaea::engine::event::handler_cb, void *>>(
+					type, std::pair<gaea::engine::event::handler_cb, void *>(handler, context)));
 			}
 
 			size_t 
@@ -350,7 +365,7 @@ namespace gaea {
 			void 
 			_observer::unregister_all_handlers(void)
 			{
-				std::map<gaea::event_t, gaea::engine::event::handler_cb>::iterator iter;
+				std::map<gaea::event_t, std::pair<gaea::engine::event::handler_cb, void *>>::iterator iter;
 
 				if(gaea::engine::event::manager::is_allocated()) {
 
@@ -359,11 +374,11 @@ namespace gaea {
 
 						for(iter = m_handler.begin(); iter != m_handler.end(); ++iter) {
 
-							if(!instance.contains_handler(iter->second, iter->first)) {
+							if(!instance.contains_handler(iter->second.first, iter->first, iter->second.second)) {
 								continue;
 							}
 
-							instance.unregister_handler(iter->second, iter->first);
+							instance.unregister_handler(iter->second.first, iter->first, iter->second.second);
 						}
 					}
 				}
@@ -376,7 +391,7 @@ namespace gaea {
 				__in gaea::event_t type
 				)
 			{
-				std::map<gaea::event_t, gaea::engine::event::handler_cb>::iterator iter;
+				std::map<gaea::event_t, std::pair<gaea::engine::event::handler_cb, void *>>::iterator iter;
 
 				iter = find(type);
 
@@ -384,8 +399,8 @@ namespace gaea {
 
 					gaea::engine::event::manager &instance = gaea::engine::event::manager::acquire();
 					if(instance.is_initialized() 
-							&& instance.contains_handler(iter->second, type)) {
-						instance.unregister_handler(iter->second, type);
+							&& instance.contains_handler(iter->second.first, type, iter->second.second)) {
+						instance.unregister_handler(iter->second.first, type, iter->second.second);
 					}
 				}
 
@@ -419,7 +434,7 @@ namespace gaea {
 			_manager::_thread(void)
 			{
 				size_t iter, count[EVENT_MAX + 1], total;
-				std::set<gaea::engine::event::handler_cb>::iterator handler_iter;
+				std::set<std::pair<gaea::engine::event::handler_cb, void *>>::iterator handler_iter;
 				std::map<gaea::uid_t, std::pair<gaea::engine::event::base, size_t>>::iterator event_iter;
 
 				if(gaea::engine::event::manager::is_allocated()) {
@@ -432,7 +447,7 @@ namespace gaea {
 							break;
 						}
 
-						for(;;) {
+						while(instance.is_initialized()) {
 							total = 0;
 
 							for(iter = 0; iter <= EVENT_MAX; ++iter) {
@@ -450,13 +465,13 @@ namespace gaea {
 									continue;
 								}
 
+								std::lock_guard<std::recursive_mutex> lock(instance.m_lock);
 								event_iter = instance.m_event.at(iter).find(instance.m_event_queue.at(iter).front());
-								gaea::engine::event::base &event = event_iter->second.first;
 
 								for(handler_iter = instance.m_handler.at(iter).begin(); 
 										handler_iter != instance.m_handler.at(iter).end();
 										++handler_iter) {
-									(*handler_iter)(event);
+									(*(handler_iter->first))(event_iter->second.first, handler_iter->second);
 								}
 
 								instance.m_event.at(iter).erase(event_iter);
@@ -501,6 +516,8 @@ namespace gaea {
 					THROW_GAEA_EVENT_EXCEPTION(GAEA_EVENT_EXCEPTION_UNINITIALIZED);
 				}
 
+				std::lock_guard<std::recursive_mutex> lock(m_lock);
+
 				if(type >= m_event.size()) {
 					THROW_GAEA_EVENT_EXCEPTION_FORMAT(GAEA_EVENT_EXCEPTION_INVALID_TYPE,
 						"%x", type);
@@ -512,7 +529,8 @@ namespace gaea {
 			bool 
 			_manager::contains_handler(
 				__in gaea::engine::event::handler_cb handler,
-				__in gaea::event_t type
+				__in gaea::event_t type,
+				__in_opt void *context
 				)
 			{
 
@@ -530,7 +548,8 @@ namespace gaea {
 						"%p", handler);
 				}
 
-				return (m_handler.at(type).find(handler) != m_handler.at(type).end());
+				return (m_handler.at(type).find(std::pair<gaea::engine::event::handler_cb, void *>(handler, context)) 
+						!= m_handler.at(type).end());
 			}
 
 			size_t 
@@ -541,6 +560,8 @@ namespace gaea {
 			{
 				size_t result = 0;
 				std::map<gaea::uid_t, std::pair<gaea::engine::event::base, size_t>>::iterator iter;
+
+				std::lock_guard<std::recursive_mutex> lock(m_lock);
 
 				iter = find_event(id, type);
 				if(iter->second.second <= REFERENCE_INIT) {
@@ -560,6 +581,8 @@ namespace gaea {
 			{
 				std::map<gaea::uid_t, std::pair<gaea::engine::event::base, size_t>>::iterator result;
 
+				std::lock_guard<std::recursive_mutex> lock(m_lock);
+
 				if(!m_initialized) {
 					THROW_GAEA_EVENT_EXCEPTION(GAEA_EVENT_EXCEPTION_UNINITIALIZED);
 				}
@@ -578,13 +601,14 @@ namespace gaea {
 				return result;
 			}
 
-			std::set<gaea::engine::event::handler_cb>::iterator 
+			std::set<std::pair<gaea::engine::event::handler_cb, void *>>::iterator 
 			_manager::find_handler(
 				__in gaea::engine::event::handler_cb handler,
-				__in gaea::event_t type
+				__in gaea::event_t type,
+				__in_opt void *context
 				)
 			{
-				std::set<gaea::engine::event::handler_cb>::iterator result;
+				std::set<std::pair<gaea::engine::event::handler_cb, void *>>::iterator result;
 
 				if(!m_initialized) {
 					THROW_GAEA_EVENT_EXCEPTION(GAEA_EVENT_EXCEPTION_UNINITIALIZED);
@@ -600,10 +624,10 @@ namespace gaea {
 						"%p", handler);
 				}
 
-				result = m_handler.at(type).find(handler);
+				result = m_handler.at(type).find(std::pair<gaea::engine::event::handler_cb, void *>(handler, context));
 				if(result == m_handler.at(type).end()) {
 					THROW_GAEA_EVENT_EXCEPTION_FORMAT(GAEA_EVENT_EXCEPTION_HANDLER_NOT_FOUND,
-						"[%s (%x)] %p", EVENT_STRING(type), type, handler);
+						"[%s (%x)] %p(%p)", EVENT_STRING(type), type, handler, context);
 				}
 
 				return result;
@@ -620,6 +644,8 @@ namespace gaea {
 				std::vector<uint8_t> data;
 				gaea::uid_t result = UID_INVALID;
 				std::map<gaea::uid_t, std::pair<gaea::engine::event::base, size_t>>::iterator iter;
+
+				std::lock_guard<std::recursive_mutex> lock(m_lock);
 
 				if(!m_initialized) {
 					THROW_GAEA_EVENT_EXCEPTION(GAEA_EVENT_EXCEPTION_UNINITIALIZED);
@@ -671,7 +697,7 @@ namespace gaea {
 
 				m_event.resize(EVENT_MAX + 1, std::map<gaea::uid_t, std::pair<gaea::engine::event::base, size_t>>());
 				m_event_queue.resize(EVENT_MAX + 1, std::queue<gaea::uid_t>());
-				m_handler.resize(EVENT_MAX + 1, std::set<gaea::engine::event::handler_cb>());
+				m_handler.resize(EVENT_MAX + 1, std::set<std::pair<gaea::engine::event::handler_cb, void *>>());
 				m_initialized = true;
 				m_thread = std::thread(gaea::engine::event::manager::_thread);
 			}
@@ -700,10 +726,11 @@ namespace gaea {
 			void 
 			_manager::register_handler(
 				__in gaea::engine::event::handler_cb handler,
-				__in gaea::event_t type
+				__in gaea::event_t type,
+				__in_opt void *context
 				)
 			{
-				std::set<gaea::engine::event::handler_cb>::iterator iter;
+				std::set<std::pair<gaea::engine::event::handler_cb, void *>>::iterator iter;
 
 				if(!m_initialized) {
 					THROW_GAEA_EVENT_EXCEPTION(GAEA_EVENT_EXCEPTION_UNINITIALIZED);
@@ -719,13 +746,13 @@ namespace gaea {
 						"%p", handler);
 				}
 
-				iter = m_handler.at(type).find(handler);
+				iter = m_handler.at(type).find(std::pair<gaea::engine::event::handler_cb, void *>(handler, context));
 				if(iter != m_handler.at(type).end()) {
-					THROW_GAEA_EVENT_EXCEPTION_FORMAT(GAEA_EVENT_EXCEPTION_DUPLICATE_HANDLER, "[%s (%x)] %p", 
-						EVENT_STRING(type), type, handler);
+					THROW_GAEA_EVENT_EXCEPTION_FORMAT(GAEA_EVENT_EXCEPTION_DUPLICATE_HANDLER, "[%s (%x)] %p(%p)", 
+						EVENT_STRING(type), type, handler, context);
 				}
 
-				m_handler.at(type).insert(handler);
+				m_handler.at(type).insert(std::pair<gaea::engine::event::handler_cb, void *>(handler, context));
 			}
 
 			std::string 
@@ -735,8 +762,10 @@ namespace gaea {
 			{
 				size_t count, iter = 0;
 				std::stringstream result;
-				std::set<gaea::engine::event::handler_cb>::iterator handler_iter;
+				std::set<std::pair<gaea::engine::event::handler_cb, void *>>::iterator handler_iter;
 				std::map<gaea::uid_t, std::pair<gaea::engine::event::base, size_t>>::iterator event_iter;
+
+				std::lock_guard<std::recursive_mutex> lock(m_lock);
 
 				result << GAEA_EVENT_HEADER << " (" << (m_initialized ? "INIT" : "UNINIT") << ")";
 
@@ -768,7 +797,8 @@ namespace gaea {
 									handler_iter != m_handler.at(iter).end();
 									++count, ++handler_iter) {
 								result << std::endl << "[" << count << "]"
-									<< " HDL=" << SCALAR_AS_HEX(uintptr_t, *handler_iter);
+									<< " HDL=" << SCALAR_AS_HEX(uintptr_t, handler_iter->first)
+									<< ", CTX=" << SCALAR_AS_HEX(uintptr_t, handler_iter->second);
 							}
 						}
 					}
@@ -796,10 +826,11 @@ namespace gaea {
 			void 
 			_manager::unregister_handler(
 				__in gaea::engine::event::handler_cb handler,
-				__in gaea::event_t type
+				__in gaea::event_t type,
+				__in_opt void *context
 				)
 			{
-				std::set<gaea::engine::event::handler_cb>::iterator iter;
+				std::set<std::pair<gaea::engine::event::handler_cb, void *>>::iterator iter;
 
 				if(!m_initialized) {
 					THROW_GAEA_EVENT_EXCEPTION(GAEA_EVENT_EXCEPTION_UNINITIALIZED);
@@ -810,7 +841,7 @@ namespace gaea {
 						"%x", type);
 				}
 
-				m_handler.at(type).erase(find_handler(handler, type));
+				m_handler.at(type).erase(find_handler(handler, type, context));
 			}
 		}
 	}
