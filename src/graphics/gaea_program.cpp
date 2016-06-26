@@ -29,14 +29,10 @@ namespace gaea {
 			#define PROGRAM_ERROR_MALFORMED "Malformed program error"
 			#define PROGRAM_ERROR_UNKNOWN "Unknown program error"
 
-			_base::_base(
-				__in const std::string &vertex,
-				__in const std::string &fragment,
-				__in_opt const std::vector<std::string> &attribute
-				) :
-					gaea::graphics::base(GL_OBJECT_PROGRAM)
+			_base::_base(void) :
+				gaea::graphics::base(GL_OBJECT_PROGRAM)
 			{
-				link(vertex, fragment, attribute);
+				return;
 			}
 
 			_base::_base(

@@ -45,8 +45,8 @@ namespace gaea {
 				};
 
 			static const std::string EVENT_CAMERA_STR[] = {
-				"CLIP", "DIMENSIONS", "FOV", "POSITION DELTA", "POSITION",
-				"ROTATION DELTA", "ROTATION", "UP DELTA", "UP",
+				"CLIP", "DIMENSIONS", "DELTA FOV", "FOV", "DELTA POSITION", "POSITION",
+				"DELTA ROTATION", "ROTATION", "DELTA UP", "UP",
 				};
 
 			static const std::string EVENT_INPUT_STR[] = {
@@ -656,24 +656,27 @@ namespace gaea {
 						"%x", type);
 				}
 
-				if((!context && length) || (context && !length)) {
-					THROW_GAEA_EVENT_EXCEPTION_FORMAT(GAEA_EVENT_EXCEPTION_INVALID_CONTEXT,
-						"%p[%u]", context, length);
+				if(!m_handler.at(type).empty()) {
+
+					if((!context && length) || (context && !length)) {
+						THROW_GAEA_EVENT_EXCEPTION_FORMAT(GAEA_EVENT_EXCEPTION_INVALID_CONTEXT,
+							"%p[%u]", context, length);
+					}
+
+					data = std::vector<uint8_t>((uint8_t *) context, ((uint8_t *) context) + length);
+					gaea::engine::event::base entry(type, specifier, data);
+					result = entry.id();
+
+					if(m_event.at(type).find(entry.id()) != m_event.at(type).end()) {
+						THROW_GAEA_EVENT_EXCEPTION_FORMAT(GAEA_EVENT_EXCEPTION_DUPLICATE_EVENT, "{%x}[%s (%x), %x]", 
+							result, EVENT_STRING(entry.type()), entry.type(), entry.specifier());
+					}
+
+					m_event.at(type).insert(std::pair<gaea::uid_t, std::pair<gaea::engine::event::base, size_t>>(result, 
+						std::pair<gaea::engine::event::base, size_t>(entry, REFERENCE_INIT + REFERENCE_OFFSET)));
+					m_event_queue.at(type).push(result);
+					m_signal.notify();
 				}
-
-				data = std::vector<uint8_t>((uint8_t *) context, ((uint8_t *) context) + length);
-				gaea::engine::event::base entry(type, specifier, data);
-				result = entry.id();
-
-				if(m_event.at(type).find(entry.id()) != m_event.at(type).end()) {
-					THROW_GAEA_EVENT_EXCEPTION_FORMAT(GAEA_EVENT_EXCEPTION_DUPLICATE_EVENT, "{%x}[%s (%x), %x]", 
-						result, EVENT_STRING(entry.type()), entry.type(), entry.specifier());
-				}
-
-				m_event.at(type).insert(std::pair<gaea::uid_t, std::pair<gaea::engine::event::base, size_t>>(result, 
-					std::pair<gaea::engine::event::base, size_t>(entry, REFERENCE_INIT + REFERENCE_OFFSET)));
-				m_event_queue.at(type).push(result);
-				m_signal.notify();
 
 				return result;
 			}

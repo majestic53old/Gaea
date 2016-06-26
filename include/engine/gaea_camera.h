@@ -30,12 +30,18 @@ namespace gaea {
 			#define CAMERA_CLIP_MAX 1000.f
 			#define CAMERA_CLIP_MIN 0.1f
 			#define CAMERA_FOV_INIT 45.f
-			#define CAMERA_POSITION_INIT glm::vec3()
-			#define CAMERA_ROTATION_INIT glm::vec3(0.f, 0.f, glm::pi<GLfloat>())
-			#define CAMERA_UP_INIT glm::vec3(0.f, DIRECTION_UP, 0.f)
+			#define CAMERA_FOV_MAX 90.f
+			#define CAMERA_FOV_MIN 10.f
+			#define CAMERA_PITCH_MAX 89.f
+			#define CAMERA_POSITION_INIT ENTITY_POSITION_INIT
+			#define CAMERA_ROTATION_INIT ENTITY_ROTATION_INIT
+			#define CAMERA_UP_INIT ENTITY_UP_INIT
+			#define CAMERA_YAW_MAX 360.f
+			#define CAMERA_YAW_MIN 0.f
 
 			typedef class _base :
-					public gaea::engine::entity::base {
+					public gaea::engine::entity::base_position,
+					public gaea::engine::event::observer {
 
 				public:
 
@@ -65,7 +71,13 @@ namespace gaea {
 
 					const glm::mat4 &projection(void);
 
-					void render(void);
+					virtual void render(
+						__in const glm::vec3 &position,
+						__in const glm::vec3 &rotation,
+						__in const glm::vec3 &up,
+						__in const glm::mat4 &projection,
+						__in const glm::mat4 &view
+						);
 
 					void set_clip(
 						__in const glm::vec2 &clip
@@ -79,26 +91,11 @@ namespace gaea {
 						__in GLfloat fov
 						);
 
-					void set_position(
-						__in const glm::vec3 &position,
-						__in_opt bool delta = false
-						);
-
-					void set_rotation(
-						__in const glm::vec3 &rotation,
-						__in_opt bool delta = false
-						);
-
-					void set_up(
-						__in const glm::vec3 &up,
-						__in_opt bool delta = false
-						);
-
 					virtual std::string to_string(
 						__in_opt bool verbose = false
 						);
 
-					void update(
+					virtual void update(
 						__in GLfloat delta
 						);
 
@@ -115,9 +112,6 @@ namespace gaea {
 
 					void setup(
 						__in const glm::ivec2 &dimensions,
-						__in const glm::vec3 &position,
-						__in const glm::vec3 &rotation,
-						__in const glm::vec3 &up,
 						__in const glm::vec2 &clip,
 						__in GLfloat fov
 						);
@@ -131,14 +125,16 @@ namespace gaea {
 					glm::ivec2 m_dimensions;
 
 					GLfloat m_fov;
-
-					glm::vec3 m_position;
 				
+					GLfloat m_fov_delta;
+
+					glm::vec3 m_position_delta;
+
 					glm::mat4 m_projection;
 
-					glm::vec3 m_rotation;
+					glm::vec3 m_rotation_delta;
 
-					glm::vec3 m_up;
+					glm::vec3 m_up_delta;
 
 					glm::mat4 m_view;
 			} base;

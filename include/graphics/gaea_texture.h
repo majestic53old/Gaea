@@ -55,17 +55,7 @@ namespace gaea {
 
 				public:
 
-					_base(
-						__in const std::string &texture,
-						__in gaea::image_t type,
-						__in_opt GLint filter_mag = TEXTURE_FILTER_MAG_INIT,
-						__in_opt GLint filter_min = TEXTURE_FILTER_MIN_INIT,
-						__in_opt GLint wrap_s = TEXTURE_WRAP_S_INIT,
-						__in_opt GLint wrap_t = TEXTURE_WRAP_T_INIT,
-						__in_opt GLint level = TEXTURE_LEVEL_INIT,
-						__in_opt GLint border = TEXTURE_BORDER_INIT,
-						__in_opt GLuint index = TEXTURE_INDEX_INIT
-						);
+					_base(void);
 
 					_base(
 						__in const _base &other
@@ -82,6 +72,18 @@ namespace gaea {
 						__in_opt bool verbose = false
 						);
 
+					void load(
+						__in const std::string &texture,
+						__in gaea::image_t type,
+						__in_opt GLint filter_mag = TEXTURE_FILTER_MAG_INIT,
+						__in_opt GLint filter_min = TEXTURE_FILTER_MIN_INIT,
+						__in_opt GLint wrap_s = TEXTURE_WRAP_S_INIT,
+						__in_opt GLint wrap_t = TEXTURE_WRAP_T_INIT,
+						__in_opt GLint level = TEXTURE_LEVEL_INIT,
+						__in_opt GLint border = TEXTURE_BORDER_INIT,
+						__in_opt GLuint index = TEXTURE_INDEX_INIT
+						);
+
 					void start(void);
 
 					void stop(void);
@@ -91,17 +93,6 @@ namespace gaea {
 						);
 
 				protected:
-
-					void load(
-						__in const std::string &texture,
-						__in gaea::image_t type,
-						__in_opt GLint filter_mag = TEXTURE_FILTER_MAG_INIT,
-						__in_opt GLint filter_min = TEXTURE_FILTER_MIN_INIT,
-						__in_opt GLint wrap_s = TEXTURE_WRAP_S_INIT,
-						__in_opt GLint wrap_t = TEXTURE_WRAP_T_INIT,
-						__in_opt GLint level = TEXTURE_LEVEL_INIT,
-						__in_opt GLint border = TEXTURE_BORDER_INIT
-						);
 
 					GLuint m_index;
 

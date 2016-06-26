@@ -27,7 +27,7 @@ namespace gaea {
 		namespace entity {
 
 			static const std::string ENTITY_STR[] = {
-				"CAMERA",
+				"CAMERA", "SURFACE",
 				};
 
 			#define ENTITY_STRING(_TYPE_) \
@@ -48,6 +48,8 @@ namespace gaea {
 					THROW_GAEA_ENTITY_EXCEPTION_FORMAT(GAEA_ENTITY_EXCEPTION_INVALID,
 						"%x", type);
 				}
+
+				generate();
 			}
 
 			_base::_base(
@@ -57,12 +59,12 @@ namespace gaea {
 					m_specifier(other.m_specifier),
 					m_visible(other.m_visible)
 			{
-				return;
+				increment_reference();
 			}
 
 			_base::~_base(void)
 			{
-				return;
+				decrement_reference();
 			}
 
 			_base &
@@ -72,9 +74,11 @@ namespace gaea {
 			{
 
 				if(this != &other) {
+					decrement_reference();
 					gaea::engine::object::base::operator=(other);
 					m_specifier = other.m_specifier;
 					m_visible = other.m_visible;
+					increment_reference();
 				}
 
 				return *this;
@@ -98,6 +102,47 @@ namespace gaea {
 				result << "] " << (object.m_visible ? "VISIBLE" : "INVISIBLE");
 
 				return result.str();
+			}
+
+			void 
+			_base::decrement_reference(void)
+			{
+
+				if(gaea::engine::entity::manager::is_allocated()) {
+
+					gaea::engine::entity::manager &instance = gaea::engine::entity::manager::acquire();
+					if(instance.is_initialized()
+							&& instance.contains(m_id, (gaea::entity_t) m_subtype)) {
+						instance.decrement_reference(m_id, (gaea::entity_t) m_subtype);
+					}
+				}
+			}
+
+			void 
+			_base::generate(void)
+			{
+
+				if(gaea::engine::entity::manager::is_allocated()) {
+
+					gaea::engine::entity::manager &instance = gaea::engine::entity::manager::acquire();
+					if(instance.is_initialized()) {
+						instance.generate(*this);
+					}
+				}
+			}
+
+			void 
+			_base::increment_reference(void)
+			{
+
+				if(gaea::engine::entity::manager::is_allocated()) {
+
+					gaea::engine::entity::manager &instance = gaea::engine::entity::manager::acquire();
+					if(instance.is_initialized()
+							&& instance.contains(m_id, (gaea::entity_t) m_subtype)) {
+						instance.increment_reference(m_id, (gaea::entity_t) m_subtype);
+					}
+				}
 			}
 
 			bool 
@@ -132,6 +177,201 @@ namespace gaea {
 				)
 			{
 				m_visible = value;
+			}
+
+			_base_position::_base_position(
+				__in gaea::entity_t type,
+				__in_opt uint32_t specifier,
+				__in_opt const glm::vec3 &position,
+				__in_opt const glm::vec3 &rotation,
+				__in_opt const glm::vec3 &up,
+				__in_opt bool visible
+				) :
+					gaea::engine::entity::base(type, specifier, visible),
+					m_position(position),
+					m_rotation(rotation),
+					m_up(up)
+			{
+				return;
+			}
+
+			_base_position::_base_position(
+				__in const _base_position &other
+				) :
+					gaea::engine::entity::base(other),
+					m_position(other.m_position),
+					m_rotation(other.m_rotation),
+					m_up(other.m_up)
+			{
+				return;
+			}
+
+			_base_position::~_base_position(void)
+			{
+				return;
+			}
+
+			_base_position &
+			_base_position::operator=(
+				__in const _base_position &other
+				)
+			{
+
+				if(this != &other) {
+					gaea::engine::entity::base::operator=(other);
+					m_position = other.m_position;
+					m_rotation = other.m_rotation;
+					m_up = other.m_up;
+				}
+
+				return *this;
+			}
+
+			std::string 
+			_base_position::as_string(
+				__in const _base_position &object,
+				__in_opt bool verbose
+				)
+			{
+				std::stringstream result;
+
+				result << gaea::engine::entity::base::as_string(object, verbose)
+					<< ", POS={" << object.m_position.x << ", " << object.m_position.y << ", " << object.m_position.z << "}"
+					<< ", ROT={" << object.m_rotation.x << ", " << object.m_rotation.y << ", " << object.m_rotation.z << "}"
+					<< ", UP={" << object.m_up.x << ", " << object.m_up.y << ", " << object.m_up.z << "}";
+
+				return result.str();
+			}
+
+			glm::vec3 &
+			_base_position::position(void)
+			{
+				return m_position;
+			}
+
+			glm::vec3 &
+			_base_position::rotation(void)
+			{
+				return m_rotation;
+			}
+
+			std::string 
+			_base_position::to_string(
+				__in_opt bool verbose
+				)
+			{
+				return gaea::engine::entity::base_position::as_string(*this, verbose);
+			}
+
+			glm::vec3 &
+			_base_position::up(void)
+			{
+				return m_up;
+			}
+
+			_base_model::_base_model(
+				__in gaea::entity_t type,
+				__in_opt uint32_t specifier,
+				__in_opt const glm::vec3 &position,
+				__in_opt const glm::vec3 &rotation,
+				__in_opt const glm::vec3 &up,
+				__in_opt GLuint model_id,
+				__in_opt GLuint projection_id,
+				__in_opt GLuint view_id,
+				__in_opt bool visible
+				) :
+					gaea::engine::entity::base_position(type, specifier, position, rotation, up, visible),
+					m_model_id(model_id),
+					m_projection_id(projection_id),
+					m_view_id(view_id)
+			{
+				return;
+			}
+
+			_base_model::_base_model(
+				__in const _base_model &other
+				) :
+					gaea::engine::entity::base_position(other),
+					m_model_id(other.m_model_id),
+					m_projection_id(other.m_projection_id),
+					m_view_id(other.m_view_id)
+			{
+				return;
+			}
+
+			_base_model::~_base_model(void)
+			{
+				return;
+			}
+
+			_base_model &
+			_base_model::operator=(
+				__in const _base_model &other
+				)
+			{
+
+				if(this != &other) {
+					gaea::engine::entity::base_position::operator=(other);
+					m_model_id = other.m_model_id;
+					m_projection_id = other.m_projection_id;
+					m_view_id = other.m_view_id;
+				}
+
+				return *this;
+			}
+
+			std::string 
+			_base_model::as_string(
+				__in const _base_model &object,
+				__in_opt bool verbose
+				)
+			{
+				std::stringstream result;
+
+				result << gaea::engine::entity::base_position::as_string(object, verbose)
+					<< ", MID=" << SCALAR_AS_HEX(GLint, object.m_model_id)
+					<< ", PID=" << SCALAR_AS_HEX(GLint, object.m_projection_id)
+					<< ", VID=" << SCALAR_AS_HEX(GLint, object.m_view_id);
+
+				return result.str();
+			}
+
+			const glm::mat4 &
+			_base_model::model(void)
+			{
+				return m_model;
+			}
+
+			GLint &
+			_base_model::model_id(void)
+			{
+				return m_model_id;
+			}
+
+			GLint &
+			_base_model::projection_id(void)
+			{
+				return m_projection_id;
+			}
+
+			std::string 
+			_base_model::to_string(
+				__in_opt bool verbose
+				)
+			{
+				return gaea::engine::entity::base_model::as_string(*this, verbose);
+			}
+
+			void 
+			_base_model::update_model(void)
+			{
+				m_model = glm::lookAt(m_position, m_position + m_rotation, m_up);
+			}
+
+			GLint &
+			_base_model::view_id(void)
+			{
+				return m_view_id;
 			}
 
 			_manager *_manager::m_instance = nullptr;
@@ -313,19 +553,29 @@ namespace gaea {
 			}
 
 			void 
-			_manager::render(void)
+			_manager::render(
+				__in const glm::vec3 &position,
+				__in const glm::vec3 &rotation,
+				__in const glm::vec3 &up,
+				__in const glm::mat4 &projection,
+				__in const glm::mat4 &view
+				)
 			{
 				size_t iter = 0;
 				std::map<gaea::uid_t, std::pair<gaea::engine::entity::base &, size_t>>::iterator entry_iter;
 
 				for(; iter < m_entry.size(); ++iter) {
 
+					if(iter == ENTITY_CAMERA) {
+						continue;
+					}
+
 					for(entry_iter = m_entry.at(iter).begin(); entry_iter != m_entry.at(iter).end();
 							++entry_iter) {
 
 						gaea::engine::entity::base &object = entry_iter->second.first;
 						if(object.is_visible()) {
-							object.render();
+							object.render(position, rotation, up, projection, view);
 						}
 					}
 				}

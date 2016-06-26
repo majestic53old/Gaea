@@ -27,11 +27,6 @@ namespace gaea {
 		namespace camera {
 
 			#define CAMERA_DIMENSION_MIN 1.f
-			#define CAMERA_FOV_MAX 90.f
-			#define CAMERA_FOV_MIN 10.f
-			#define CAMERA_PITCH_MAX 89.f
-			#define CAMERA_YAW_MAX 360.f
-			#define CAMERA_YAW_MIN 0.f
 
 			_base::_base(
 				__in const glm::ivec2 &dimensions,
@@ -41,30 +36,33 @@ namespace gaea {
 				__in_opt const glm::vec2 &clip,
 				__in_opt GLfloat fov
 				) :
-					gaea::engine::entity::base(ENTITY_CAMERA, ENTITY_SPECIFIER_UNDEFINED, false),
+					gaea::engine::entity::base_position(ENTITY_CAMERA, ENTITY_SPECIFIER_UNDEFINED, 
+						position, rotation, up, false),
 					m_clip(CAMERA_CLIP_INIT),
 					m_dimensions(dimensions),
 					m_fov(CAMERA_FOV_INIT),
-					m_position(CAMERA_POSITION_INIT),
+					m_fov_delta(0.f),
+					m_position_delta(glm::vec3()),
 					m_projection(glm::mat4()),
-					m_rotation(CAMERA_ROTATION_INIT),
-					m_up(CAMERA_UP_INIT),
+					m_rotation_delta(glm::vec3()),
+					m_up_delta(glm::vec3()),
 					m_view(glm::mat4())
 			{
-				setup(dimensions, position, rotation, up, clip, fov);
+				setup(dimensions, clip, fov);
 			}
 
 			_base::_base(
 				__in const _base &other
 				) :
-					gaea::engine::entity::base(other),
+					gaea::engine::entity::base_position(other),
 					m_clip(other.m_clip),
 					m_dimensions(other.m_dimensions),
 					m_fov(other.m_fov),
-					m_position(other.m_position),
+					m_fov_delta(other.m_fov_delta),
+					m_position_delta(other.m_position_delta),
 					m_projection(other.m_projection),
-					m_rotation(other.m_rotation),
-					m_up(other.m_up),
+					m_rotation_delta(other.m_rotation_delta),
+					m_up_delta(other.m_up_delta),
 					m_view(other.m_view)
 			{
 				setup();
@@ -82,14 +80,15 @@ namespace gaea {
 			{
 
 				if(this != &other) {
-					gaea::engine::entity::base::operator=(other);
+					gaea::engine::entity::base_position::operator=(other);
 					m_clip = other.m_clip;
 					m_dimensions = other.m_dimensions;
 					m_fov = other.m_fov;
-					m_position = other.m_position;
+					m_fov_delta = other.m_fov_delta;
+					m_position_delta = other.m_position_delta;
 					m_projection = other.m_projection;
-					m_rotation = other.m_rotation;
-					m_up = other.m_up;
+					m_rotation_delta = other.m_rotation_delta;
+					m_up_delta = other.m_up_delta;
 					m_view = other.m_view;
 					setup();
 				}
@@ -105,13 +104,10 @@ namespace gaea {
 			{
 				std::stringstream result;
 
-				result << gaea::engine::entity::base::as_string(object, verbose)
+				result << gaea::engine::entity::base_position::as_string(object, verbose)
 					<< ", CLIP={" << object.m_clip.x << ", " << object.m_clip.y << "}"
 					<< ", DIM={" << object.m_dimensions.x << ", " << object.m_dimensions.y << "}"
-					<< ", FOV=" << object.m_fov
-					<< ", POS={" << object.m_position.x << ", " << object.m_position.y << ", " << object.m_position.z << "}"
-					<< ", ROT={" << object.m_rotation.x << ", " << object.m_rotation.y << ", " << object.m_rotation.z << "}"
-					<< ", UP={" << object.m_up.x << ", " << object.m_up.y << ", " << object.m_up.z << "}";
+					<< ", FOV=" << object.m_fov;
 
 				return result.str();
 			}
@@ -158,6 +154,7 @@ namespace gaea {
 						instance->set_dimensions(*ivec2_data);
 						instance->update_projection();
 						break;
+					case EVENT_CAMERA_FOV_DELTA:
 					case EVENT_CAMERA_FOV_SET:
 
 						float_data = (GLfloat *) event.context();
@@ -166,8 +163,17 @@ namespace gaea {
 								"%s", STRING_CHECK(event.to_string(true)));
 						}
 
-						instance->set_fov(*float_data);
-						instance->update_projection();
+						switch(specifier) {
+							case EVENT_CAMERA_FOV_DELTA:
+								instance->m_fov_delta -= *float_data;
+								break;
+							case EVENT_CAMERA_FOV_SET:
+								instance->set_fov(*float_data);
+								instance->update_projection();
+								break;
+							default:
+								break;
+						}
 						break;
 					case EVENT_CAMERA_POSITION_DELTA:
 					case EVENT_CAMERA_POSITION_SET:
@@ -184,22 +190,22 @@ namespace gaea {
 
 						switch(specifier) {
 							case EVENT_CAMERA_POSITION_DELTA:
-								instance->set_position(*vec3_data, true);
+								instance->m_position_delta += *vec3_data;
 								break;
 							case EVENT_CAMERA_POSITION_SET:
-								instance->set_position(*vec3_data);
+								instance->m_position = *vec3_data;
 								break;
 							case EVENT_CAMERA_ROTATION_DELTA:
-								instance->set_rotation(*vec3_data, true);
+								instance->m_rotation_delta += *vec3_data;
 								break;
 							case EVENT_CAMERA_ROTATION_SET:
-								instance->set_rotation(*vec3_data);
+								instance->m_rotation = *vec3_data;
 								break;
 							case EVENT_CAMERA_UP_DELTA:
-								instance->set_up(*vec3_data, true);
+								instance->m_up_delta += *vec3_data;
 								break;
 							case EVENT_CAMERA_UP_SET:
-								instance->set_up(*vec3_data);
+								instance->m_up = *vec3_data;
 								break;
 							default:
 								break;
@@ -217,7 +223,13 @@ namespace gaea {
 			}
 
 			void 
-			_base::render(void)
+			_base::render(
+				__in const glm::vec3 &position,
+				__in const glm::vec3 &rotation,
+				__in const glm::vec3 &up,
+				__in const glm::mat4 &projection,
+				__in const glm::mat4 &view
+				)
 			{
 				return;
 			}
@@ -277,68 +289,9 @@ namespace gaea {
 			}
 
 			void 
-			_base::set_position(
-				__in const glm::vec3 &position,
-				__in_opt bool delta
-				)
-			{
-
-				if(delta) {
-					m_position += position;
-				} else {
-					m_position = position;
-				}
-			}
-
-			void 
-			_base::set_rotation(
-				__in const glm::vec3 &rotation,
-				__in_opt bool delta
-				)
-			{
-
-				if(delta) {
-					m_rotation += rotation;
-				} else {
-					m_rotation = rotation;
-				}
-
-				if(m_rotation.x < -CAMERA_PITCH_MAX) {
-					m_rotation.x = -CAMERA_PITCH_MAX;
-				} else if(m_rotation.x > CAMERA_PITCH_MAX) {
-					m_rotation.x = CAMERA_PITCH_MAX;
-				}
-
-				if(m_rotation.y < CAMERA_YAW_MIN) {
-					m_rotation.y = CAMERA_YAW_MAX;
-				} else if(m_rotation.y > CAMERA_YAW_MAX) {
-					m_rotation.y = CAMERA_YAW_MIN;
-				}
-
-				m_rotation = glm::normalize(glm::vec3(
-					std::cos(glm::radians(m_rotation.x)) * std::sin(glm::radians(m_rotation.y)),
-					std::sin(glm::radians(m_rotation.x)),
-					std::cos(glm::radians(m_rotation.x)) * std::cos(glm::radians(m_rotation.y))));
-			}
-
-			void 
-			_base::set_up(
-				__in const glm::vec3 &up,
-				__in_opt bool delta
-				)
-			{
-
-				if(delta) {
-					m_up += up;
-				} else {
-					m_up = up;
-				}
-			}
-
-			void 
 			_base::setup(void)
 			{
-				gaea::engine::event::observer::register_handler(&base::event_handler, EVENT_CAMERA);
+				gaea::engine::event::observer::register_handler(&base::event_handler, EVENT_CAMERA, this);
 				update_projection();
 				update_view();
 			}
@@ -346,9 +299,6 @@ namespace gaea {
 			void 
 			_base::setup(
 				__in const glm::ivec2 &dimensions,
-				__in const glm::vec3 &position,
-				__in const glm::vec3 &rotation,
-				__in const glm::vec3 &up,
 				__in const glm::vec2 &clip,
 				__in GLfloat fov
 				)
@@ -356,9 +306,6 @@ namespace gaea {
 				set_clip(clip);
 				set_dimensions(dimensions);
 				set_fov(fov);
-				m_position = position;
-				m_rotation = rotation;
-				m_up = up;
 				setup();
 			}
 
@@ -375,6 +322,28 @@ namespace gaea {
 				__in GLfloat delta
 				)
 			{
+
+				if(m_fov_delta) {
+					m_fov += m_fov_delta;
+					m_fov_delta = 0.f;
+					update_projection();
+				}
+
+				if(m_position_delta != glm::vec3()) {
+					m_position += m_position_delta;
+					m_position_delta = glm::vec3();
+				}
+
+				if(m_rotation_delta != glm::vec3()) {
+					m_rotation += m_rotation_delta;
+					m_rotation_delta = glm::vec3();
+				}
+
+				if(m_up_delta != glm::vec3()) {
+					m_up += m_up_delta;
+					m_up_delta = glm::vec3();
+				}
+
 				update_view();
 			}
 

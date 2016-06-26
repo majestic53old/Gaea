@@ -31,11 +31,7 @@ namespace gaea {
 
 				public:
 
-					_base(
-						__in const std::string &vertex,
-						__in const std::string &fragment,
-						__in_opt const std::vector<std::string> &attribute = std::vector<std::string>()
-						);
+					_base(void);
 
 					_base(
 						__in const _base &other
@@ -50,6 +46,12 @@ namespace gaea {
 					static std::string as_string(
 						__in const _base &object,
 						__in_opt bool verbose = false
+						);
+
+					void link(
+						__in const std::string &vertex,
+						__in const std::string &fragment,
+						__in_opt const std::vector<std::string> &attribute = std::vector<std::string>()
 						);
 
 					void set_uniform(
@@ -132,14 +134,6 @@ namespace gaea {
 
 					GLint uniform_location(
 						__in const std::string &name
-						);
-
-				protected:
-
-					void link(
-						__in const std::string &vertex,
-						__in const std::string &fragment,
-						__in_opt const std::vector<std::string> &attribute = std::vector<std::string>()
 						);
 
 			} base;

@@ -20,8 +20,6 @@
 #ifndef GAEA_H_
 #define GAEA_H_
 
-//#define NDEBUG
-
 #include "gaea_define.h"
 #include "gaea_exception.h"
 #include "engine/gaea_uid.h"
@@ -37,6 +35,7 @@
 #include "graphics/gaea_cubemap.h"
 #include "engine/gaea_entity.h"
 #include "engine/gaea_camera.h"
+#include "engine/gaea_surface.h"
 
 namespace gaea {
 
@@ -96,7 +95,9 @@ namespace gaea {
 
 			static void _delete(void);
 
-			void render(void);
+			void render(
+				__in gaea::engine::camera::base &camera
+				);
 
 			void setup(
 				__in const std::string &title,

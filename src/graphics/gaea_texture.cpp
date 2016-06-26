@@ -212,21 +212,11 @@ namespace gaea {
 				}
 			}
 
-			_base::_base(
-				__in const std::string &texture,
-				__in gaea::image_t type,
-				__in_opt GLint filter_mag,
-				__in_opt GLint filter_min,
-				__in_opt GLint wrap_s,
-				__in_opt GLint wrap_t,
-				__in_opt GLint level,
-				__in_opt GLint border,
-				__in_opt GLuint index
-				) :
-					gaea::graphics::base(GL_OBJECT_TEXTURE),
-					m_index(index)
+			_base::_base(void) :
+				gaea::graphics::base(GL_OBJECT_TEXTURE),
+				m_index(TEXTURE_INDEX_INIT)
 			{
-				load(texture, type, filter_mag, filter_min, wrap_s, wrap_t, level, border);
+				return;
 			}
 
 			_base::_base(
@@ -280,13 +270,15 @@ namespace gaea {
 				__in_opt GLint wrap_s,
 				__in_opt GLint wrap_t,
 				__in_opt GLint level,
-				__in_opt GLint border
+				__in_opt GLint border,
+				__in_opt GLuint index
 				)
 			{
 				uint8_t color, depth;
 				glm::ivec2 dimensions;
 				std::vector<uint8_t> data;
 
+				m_index = index;
 				GL_CHECK(glActiveTexture, m_index);
 				GL_CHECK(glBindTexture, GL_TEXTURE_2D, m_handle);
 				gaea::graphics::texture::import(texture, type, data, dimensions, color, depth);

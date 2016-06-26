@@ -13,6 +13,11 @@ Changelog
 =========
 
 ###Version 0.1.1626
+*Updated: 6/25/2016*
+
+* Added basic composite graphics classes
+* Added debug/release build type into makefile
+
 *Updated: 6/24/2016*
 
 * Added camera base/manager class

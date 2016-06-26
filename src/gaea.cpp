@@ -24,22 +24,18 @@ namespace gaea {
 
 	#define DELTA_DIV 1000
 	#define DELTA_MIN 1
-
 	#define GL_ATTRIB_ACCELERATED 1
 	#define GL_ATTRIB_COLOR 8
 	#define GL_ATTRIB_DEPTH 24
 	#define GL_ATTRIB_DOUBLE_BUFFER 1
 	#define GL_ATTRIB_MAJOR 3
 	#define GL_ATTRIB_MINOR 3
-
-	#define GL_CLEAR_FLAGS (GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT)
-
 	#define GL_CHAN_ALPHA GL_CHAN_MAX
 	#define GL_CHAN_BLUE (164 / (GLfloat) GL_CHAN_MAX)
 	#define GL_CHAN_GREEN (101 / (GLfloat) GL_CHAN_MAX)
 	#define GL_CHAN_MAX 255
 	#define GL_CHAN_RED (52 / (GLfloat) GL_CHAN_MAX)
-
+	#define GL_CLEAR_FLAGS (GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT)
 	#define SDL_ATTRIB_VSYNC 1
 	#define SDL_INIT_FLAGS (SDL_INIT_AUDIO | SDL_INIT_TIMER | SDL_INIT_VIDEO)
 	#define SDL_WINDOW_FLAGS (SDL_WINDOW_INPUT_GRABBED | SDL_WINDOW_OPENGL)
@@ -142,11 +138,13 @@ namespace gaea {
 	}
 
 	void 
-	_manager::render(void)
+	_manager::render(
+		__in gaea::engine::camera::base &camera
+		)
 	{
 		GL_CHECK(glClearColor, GL_CHAN_RED, GL_CHAN_GREEN, GL_CHAN_BLUE, GL_CHAN_ALPHA);
 		GL_CHECK(glClear, GL_CLEAR_FLAGS);
-		m_entity_manager.render();
+		m_entity_manager.render(camera.position(), camera.rotation(), camera.up(), camera.projection(), camera.view());
 		SDL_GL_SwapWindow(m_window);
 	}
 
@@ -255,10 +253,10 @@ namespace gaea {
 		m_event_manager.initialize();
 		m_gfx_manager.initialize();
 		m_entity_manager.initialize();
+		m_camera_manager.initialize(dimensions);
 
 		// TODO: initialize singletons
 
-		m_camera_manager.initialize(dimensions);
 	}
 
 	void 
@@ -281,6 +279,32 @@ namespace gaea {
 		}
 
 		setup(title, dimensions, fullscreen, tick);
+		gaea::engine::camera::base &camera = m_camera_manager.entry();
+
+		// TODO: DEBUGGING
+		enum {
+			ATTRIB_COLOR = 0,
+			ATTRIB_VERTEX,
+		};
+
+		static const glm::vec3 COLOR[] = {
+			glm::vec3(1.f, 0.f, 0.f), glm::vec3(0.f, 1.f, 0.f), glm::vec3(0.f,  0.f, 1.f),
+			};
+
+		static const glm::vec3 VERTEX[] = {
+			glm::vec3(-1.f, -1.f, 0.f), glm::vec3(1.f, -1.f, 0.f), glm::vec3(0.f,  1.f, 0.f),
+			};
+
+		gaea::engine::surface::base *surface_test = new gaea::engine::surface::base(glm::vec3(0.f, 0.f, 4.f));
+		if(surface_test) {
+			surface_test->add_attribute(COLOR, sizeof(COLOR), GL_ARRAY_BUFFER, GL_STATIC_DRAW, ATTRIB_COLOR,
+				sizeof(glm::vec3) / sizeof(GLfloat), GL_FLOAT);
+			surface_test->add_attribute(VERTEX, sizeof(VERTEX), GL_ARRAY_BUFFER, GL_STATIC_DRAW, ATTRIB_VERTEX,
+				sizeof(glm::vec3) / sizeof(GLfloat), GL_FLOAT);
+			surface_test->link("./res/surface_vert.glsl", "./res/surface_frag.glsl");
+			surface_test->set_indicies(3);
+		}
+		// ---
 
 		m_started = true;
 		while(m_started) {
@@ -331,11 +355,18 @@ namespace gaea {
 
 			begin = SDL_GetTicks();
 			update(delta / (GLfloat) DELTA_DIV);
-			render();
+			render(camera);
 			end = SDL_GetTicks();
 			delta = (end - begin);
 			++m_tick;
 		}
+
+		// TODO: DEBUGGING
+		if(surface_test) {
+			delete surface_test;
+			surface_test = nullptr;
+		}
+		// ---
 
 		teardown();
 	}
@@ -352,10 +383,10 @@ namespace gaea {
 	void 
 	_manager::teardown(void)
 	{
-		m_camera_manager.uninitialize();
 
 		// TODO: uninitialize singletons
 
+		m_camera_manager.uninitialize();
 		m_entity_manager.uninitialize();		
 		m_gfx_manager.uninitialize();
 		m_event_manager.uninitialize();

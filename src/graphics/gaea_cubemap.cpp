@@ -26,22 +26,11 @@ namespace gaea {
 
 		namespace cubemap {
 
-			_base::_base(
-				__in const std::vector<std::string> &face,
-				__in gaea::image_t type,
-				__in_opt GLint filter_mag,
-				__in_opt GLint filter_min,
-				__in_opt GLint wrap_s,
-				__in_opt GLint wrap_t,
-				__in_opt GLint wrap_r,
-				__in_opt GLint level,
-				__in_opt GLint border,
-				__in_opt GLuint index
-				) :
-					gaea::graphics::base(GL_OBJECT_CUBEMAP),
-					m_index(index)
+			_base::_base(void) :
+				gaea::graphics::base(GL_OBJECT_CUBEMAP),
+				m_index(CUBEMAP_INDEX_INIT)
 			{
-				load(face, type, filter_mag, filter_min, wrap_s, wrap_t, wrap_r, level, border);
+				return;
 			}
 
 			_base::_base(
@@ -96,7 +85,8 @@ namespace gaea {
 				__in_opt GLint wrap_t,
 				__in_opt GLint wrap_r,
 				__in_opt GLint level,
-				__in_opt GLint border
+				__in_opt GLint border,
+				__in_opt GLuint index
 				)
 			{
 				size_t iter = 0;
@@ -109,6 +99,7 @@ namespace gaea {
 						"%u faces (expecting %u)", face.size(), CUBEMAP_FACE_COUNT);
 				}
 
+				m_index = index;
 				GL_CHECK(glActiveTexture, m_index);
 				GL_CHECK(glBindTexture, GL_TEXTURE_CUBE_MAP, m_handle);
 

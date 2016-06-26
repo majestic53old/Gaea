@@ -41,18 +41,7 @@ namespace gaea {
 
 				public:
 
-					_base(
-						__in const std::vector<std::string> &face,
-						__in gaea::image_t type,
-						__in_opt GLint filter_mag = CUBEMAP_FILTER_MAG_INIT,
-						__in_opt GLint filter_min = CUBEMAP_FILTER_MIN_INIT,
-						__in_opt GLint wrap_s = CUBEMAP_WRAP_S_INIT,
-						__in_opt GLint wrap_t = CUBEMAP_WRAP_T_INIT,
-						__in_opt GLint wrap_r = CUBEMAP_WRAP_R_INIT,
-						__in_opt GLint level = CUBEMAP_LEVEL_INIT,
-						__in_opt GLint border = CUBEMAP_BORDER_INIT,
-						__in_opt GLuint index = CUBEMAP_INDEX_INIT
-						);
+					_base(void);
 
 					_base(
 						__in const _base &other
@@ -69,16 +58,6 @@ namespace gaea {
 						__in_opt bool verbose = false
 						);
 
-					void start(void);
-
-					void stop(void);
-
-					virtual std::string to_string(
-						__in_opt bool verbose = false
-						);
-
-				protected:
-
 					void load(
 						__in const std::vector<std::string> &face,
 						__in gaea::image_t type,
@@ -88,8 +67,19 @@ namespace gaea {
 						__in_opt GLint wrap_t = CUBEMAP_WRAP_T_INIT,
 						__in_opt GLint wrap_r = CUBEMAP_WRAP_R_INIT,
 						__in_opt GLint level = CUBEMAP_LEVEL_INIT,
-						__in_opt GLint border = CUBEMAP_BORDER_INIT
+						__in_opt GLint border = CUBEMAP_BORDER_INIT,
+						__in_opt GLuint index = CUBEMAP_INDEX_INIT
 						);
+
+					void start(void);
+
+					void stop(void);
+
+					virtual std::string to_string(
+						__in_opt bool verbose = false
+						);
+
+				protected:
 
 					GLuint m_index;
 
