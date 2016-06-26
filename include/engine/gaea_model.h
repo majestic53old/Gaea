@@ -17,14 +17,14 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-#ifndef GAEA_SURFACE_H_
-#define GAEA_SURFACE_H_
+#ifndef GAEA_MODEL_H_
+#define GAEA_MODEL_H_
 
 namespace gaea {
 
 	namespace engine {
 
-		namespace surface {
+		namespace model {
 
 			typedef class _base :
 					gaea::engine::entity::base_model {
@@ -112,4 +112,4 @@ namespace gaea {
 	}
 }
 
-#endif // GAEA_SURFACE_H_
+#endif // GAEA_MODEL_H_

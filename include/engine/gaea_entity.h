@@ -23,7 +23,7 @@
 namespace gaea {
 
 	#define ENTITY_ALL SCALAR_INVALID(gaea::entity_t)
-	#define ENTITY_MAX ENTITY_SURFACE
+	#define ENTITY_MAX ENTITY_MODEL
 	#define ENTITY_POSITION_INIT glm::vec3()
 	#define ENTITY_ROTATION_INIT glm::vec3(0.f, 0.f, glm::pi<GLfloat>())
 	#define ENTITY_SPECIFIER_UNDEFINED SCALAR_INVALID(uint32_t)
@@ -35,7 +35,7 @@ namespace gaea {
 
 	typedef enum {
 		ENTITY_CAMERA = 0,
-		ENTITY_SURFACE,
+		ENTITY_MODEL,
 	} entity_t;
 
 	namespace engine {

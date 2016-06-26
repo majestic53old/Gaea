@@ -18,13 +18,13 @@
  */
 
 #include "../../include/gaea.h"
-#include "gaea_surface_type.h"
+#include "gaea_model_type.h"
 
 namespace gaea {
 
 	namespace engine {
 
-		namespace surface {
+		namespace model {
 
 			_base::_base(
 				__in_opt const glm::vec3 &position,
@@ -32,7 +32,7 @@ namespace gaea {
 				__in_opt const glm::vec3 &up,
 				__in_opt bool visible
 				) :
-					gaea::engine::entity::base_model(ENTITY_SURFACE, ENTITY_SPECIFIER_UNDEFINED,
+					gaea::engine::entity::base_model(ENTITY_MODEL, ENTITY_SPECIFIER_UNDEFINED,
 						position, rotation, up, GL_HANDLE_INVALID, GL_HANDLE_INVALID, GL_HANDLE_INVALID, 
 						visible),
 					m_indicies(0)
@@ -163,7 +163,7 @@ namespace gaea {
 				__in_opt bool verbose
 				)
 			{
-				return gaea::engine::surface::base::as_string(*this, verbose);
+				return gaea::engine::model::base::as_string(*this, verbose);
 			}
 
 			void 

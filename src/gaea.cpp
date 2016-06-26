@@ -153,6 +153,8 @@ namespace gaea {
 		__in const std::string &title,
 		__in const glm::uvec2 &dimensions,
 		__in_opt bool fullscreen,
+		__in_opt GLfloat speed,
+		__in_opt GLfloat sensitivity,
 		__in_opt gaea::tick_t tick
 		)
 	{
@@ -249,11 +251,21 @@ namespace gaea {
 				SDL_GetError());
 		}
 
+		if(sensitivity < PLAYER_SENSITIVITY_MIN) {
+			sensitivity = PLAYER_SENSITIVITY_MIN;
+		}
+
+		if(speed < PLAYER_SPEED_MIN) {
+			speed = PLAYER_SPEED_MIN;
+		}
+
 		m_uid_manager.initialize();
 		m_event_manager.initialize();
 		m_gfx_manager.initialize();
 		m_entity_manager.initialize();
 		m_camera_manager.initialize(dimensions);
+
+		// TODO: HANDLE SPEED/SENSITIVITY SETTINGS
 
 		// TODO: initialize singletons
 
@@ -264,6 +276,8 @@ namespace gaea {
 		__in const std::string &title,
 		__in const glm::uvec2 &dimensions,
 		__in_opt bool fullscreen,
+		__in_opt GLfloat speed,
+		__in_opt GLfloat sensitivity,
 		__in_opt gaea::tick_t tick
 		)
 	{
@@ -278,7 +292,7 @@ namespace gaea {
 			THROW_GAEA_EXCEPTION(GAEA_EXCEPTION_STARTED);
 		}
 
-		setup(title, dimensions, fullscreen, tick);
+		setup(title, dimensions, fullscreen, speed, sensitivity, tick);
 		gaea::engine::camera::base &camera = m_camera_manager.entry();
 
 		// TODO: DEBUGGING
@@ -295,14 +309,14 @@ namespace gaea {
 			glm::vec3(-1.f, -1.f, 0.f), glm::vec3(1.f, -1.f, 0.f), glm::vec3(0.f,  1.f, 0.f),
 			};
 
-		gaea::engine::surface::base *surface_test = new gaea::engine::surface::base(glm::vec3(0.f, 0.f, 4.f));
-		if(surface_test) {
-			surface_test->add_attribute(COLOR, sizeof(COLOR), GL_ARRAY_BUFFER, GL_STATIC_DRAW, ATTRIB_COLOR,
+		gaea::engine::model::base *model_test = new gaea::engine::model::base(glm::vec3(0.f, 0.f, 4.f));
+		if(model_test) {
+			model_test->add_attribute(COLOR, sizeof(COLOR), GL_ARRAY_BUFFER, GL_STATIC_DRAW, ATTRIB_COLOR,
 				sizeof(glm::vec3) / sizeof(GLfloat), GL_FLOAT);
-			surface_test->add_attribute(VERTEX, sizeof(VERTEX), GL_ARRAY_BUFFER, GL_STATIC_DRAW, ATTRIB_VERTEX,
+			model_test->add_attribute(VERTEX, sizeof(VERTEX), GL_ARRAY_BUFFER, GL_STATIC_DRAW, ATTRIB_VERTEX,
 				sizeof(glm::vec3) / sizeof(GLfloat), GL_FLOAT);
-			surface_test->link("./res/surface_vert.glsl", "./res/surface_frag.glsl");
-			surface_test->set_indicies(3);
+			model_test->link("./res/model_vert.glsl", "./res/model_frag.glsl");
+			model_test->set_indicies(3);
 		}
 		// ---
 
@@ -362,9 +376,9 @@ namespace gaea {
 		}
 
 		// TODO: DEBUGGING
-		if(surface_test) {
-			delete surface_test;
-			surface_test = nullptr;
+		if(model_test) {
+			delete model_test;
+			model_test = nullptr;
 		}
 		// ---
 

@@ -34,8 +34,8 @@ archive:
 	@echo ''
 	@echo '--- BUILDING LIBRARY -----------------------'
 	ar rcs $(DIR_BIN)$(LIB) $(DIR_BUILD)gaea.o $(DIR_BUILD)gaea_camera.o $(DIR_BUILD)gaea_cubemap.o $(DIR_BUILD)gaea_entity.o \
-		$(DIR_BUILD)gaea_event.o $(DIR_BUILD)gaea_exception.o $(DIR_BUILD)gaea_gl.o $(DIR_BUILD)gaea_object.o $(DIR_BUILD)gaea_program.o \
-		$(DIR_BUILD)gaea_shader.o $(DIR_BUILD)gaea_signal.o $(DIR_BUILD)gaea_surface.o $(DIR_BUILD)gaea_texture.o $(DIR_BUILD)gaea_uid.o \
+		$(DIR_BUILD)gaea_event.o $(DIR_BUILD)gaea_exception.o $(DIR_BUILD)gaea_gl.o $(DIR_BUILD)gaea_model.o $(DIR_BUILD)gaea_object.o \
+		$(DIR_BUILD)gaea_program.o $(DIR_BUILD)gaea_shader.o $(DIR_BUILD)gaea_signal.o $(DIR_BUILD)gaea_texture.o $(DIR_BUILD)gaea_uid.o \
 		$(DIR_BUILD)gaea_vao.o $(DIR_BUILD)gaea_vbo.o
 	@echo '--- DONE -----------------------------------'
 	@echo ''
@@ -54,7 +54,7 @@ gaea_exception.o: $(DIR_SRC)gaea_exception.cpp $(DIR_INC)gaea_exception.h
 
 ### ENGINE ###
 
-build_engine: gaea_camera.o gaea_entity.o gaea_event.o gaea_object.o gaea_signal.o gaea_surface.o gaea_uid.o
+build_engine: gaea_camera.o gaea_entity.o gaea_event.o gaea_model.o gaea_object.o gaea_signal.o gaea_uid.o
 
 gaea_camera.o: $(DIR_SRC_ENG)gaea_camera.cpp $(DIR_INC_ENG)gaea_camera.h
 	$(CC) $(CC_FLAGS) $(CC_BUILD_FLAGS) -c $(DIR_SRC_ENG)gaea_camera.cpp -o $(DIR_BUILD)gaea_camera.o
@@ -71,8 +71,8 @@ gaea_object.o: $(DIR_SRC_ENG)gaea_object.cpp $(DIR_INC_ENG)gaea_object.h
 gaea_signal.o: $(DIR_SRC_ENG)gaea_signal.cpp $(DIR_INC_ENG)gaea_signal.h
 	$(CC) $(CC_FLAGS) $(CC_BUILD_FLAGS) -c $(DIR_SRC_ENG)gaea_signal.cpp -o $(DIR_BUILD)gaea_signal.o
 
-gaea_surface.o: $(DIR_SRC_ENG)gaea_surface.cpp $(DIR_INC_ENG)gaea_surface.h
-	$(CC) $(CC_FLAGS) $(CC_BUILD_FLAGS) -c $(DIR_SRC_ENG)gaea_surface.cpp -o $(DIR_BUILD)gaea_surface.o
+gaea_model.o: $(DIR_SRC_ENG)gaea_model.cpp $(DIR_INC_ENG)gaea_model.h
+	$(CC) $(CC_FLAGS) $(CC_BUILD_FLAGS) -c $(DIR_SRC_ENG)gaea_model.cpp -o $(DIR_BUILD)gaea_model.o
 
 gaea_uid.o: $(DIR_SRC_ENG)gaea_uid.cpp $(DIR_INC_ENG)gaea_uid.h
 	$(CC) $(CC_FLAGS) $(CC_BUILD_FLAGS) -c $(DIR_SRC_ENG)gaea_uid.cpp -o $(DIR_BUILD)gaea_uid.o

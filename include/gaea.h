@@ -35,10 +35,15 @@
 #include "graphics/gaea_cubemap.h"
 #include "engine/gaea_entity.h"
 #include "engine/gaea_camera.h"
-#include "engine/gaea_surface.h"
+#include "engine/gaea_model.h"
 
 namespace gaea {
 
+	#define FULLSCREEN_INIT false
+	#define PLAYER_SENSITIVITY_INIT 1.f
+	#define PLAYER_SENSITIVITY_MIN 0.1f
+	#define PLAYER_SPEED_INIT 5.f
+	#define PLAYER_SPEED_MIN 1.f
 	#define TICK_INIT 0
 	#define TICK_INVALID SCALAR_INVALID(gaea::tick_t)
 
@@ -67,7 +72,9 @@ namespace gaea {
 			void start(
 				__in const std::string &title,
 				__in const glm::uvec2 &dimensions,
-				__in_opt bool fullscreen = false,
+				__in_opt bool fullscreen = FULLSCREEN_INIT,
+				__in_opt GLfloat speed = PLAYER_SPEED_INIT,
+				__in_opt GLfloat sensitivity = PLAYER_SENSITIVITY_INIT,
 				__in_opt gaea::tick_t tick = TICK_INIT
 				);
 
@@ -102,7 +109,9 @@ namespace gaea {
 			void setup(
 				__in const std::string &title,
 				__in const glm::uvec2 &dimensions,
-				__in_opt bool fullscreen = false,
+				__in_opt bool fullscreen = FULLSCREEN_INIT,
+				__in_opt GLfloat speed = PLAYER_SPEED_INIT,
+				__in_opt GLfloat sensitivity = PLAYER_SENSITIVITY_INIT,
 				__in_opt gaea::tick_t tick = TICK_INIT
 				);
 
