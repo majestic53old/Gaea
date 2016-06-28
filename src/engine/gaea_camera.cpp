@@ -130,89 +130,92 @@ namespace gaea {
 					THROW_GAEA_CAMERA_EXCEPTION(GAEA_CAMERA_EXCEPTION_INVALID_CONTEXT);
 				}
 
-				specifier = event.specifier();
-				switch(specifier) {
-					case EVENT_CAMERA_CLIP_SET:
+				if(event.type() == EVENT_CAMERA) {
 
-						vec2_data = (glm::vec2 *) event.context();
-						if(!vec2_data || (event.length() != sizeof(glm::vec2))) {
-							THROW_GAEA_CAMERA_EXCEPTION_FORMAT(GAEA_CAMERA_EXCEPTION_INVALID_EVENT,
-								"%s", STRING_CHECK(event.to_string(true)));
-						}
+					specifier = event.specifier();
+					switch(specifier) {
+						case EVENT_CAMERA_CLIP_SET:
 
-						instance->set_clip(*vec2_data);
-						instance->update_projection();
-						break;
-					case EVENT_CAMERA_DIMENSIONS_SET:
+							vec2_data = (glm::vec2 *) event.context();
+							if(!vec2_data || (event.length() != sizeof(glm::vec2))) {
+								THROW_GAEA_CAMERA_EXCEPTION_FORMAT(GAEA_CAMERA_EXCEPTION_INVALID_EVENT,
+									"%s", STRING_CHECK(event.to_string(true)));
+							}
 
-						ivec2_data = (glm::ivec2 *) event.context();
-						if(!ivec2_data || (event.length() != sizeof(glm::ivec2))) {
-							THROW_GAEA_CAMERA_EXCEPTION_FORMAT(GAEA_CAMERA_EXCEPTION_INVALID_EVENT,
-								"%s", STRING_CHECK(event.to_string(true)));
-						}
+							instance->set_clip(*vec2_data);
+							instance->update_projection();
+							break;
+						case EVENT_CAMERA_DIMENSIONS_SET:
 
-						instance->set_dimensions(*ivec2_data);
-						instance->update_projection();
-						break;
-					case EVENT_CAMERA_FOV_DELTA:
-					case EVENT_CAMERA_FOV_SET:
+							ivec2_data = (glm::ivec2 *) event.context();
+							if(!ivec2_data || (event.length() != sizeof(glm::ivec2))) {
+								THROW_GAEA_CAMERA_EXCEPTION_FORMAT(GAEA_CAMERA_EXCEPTION_INVALID_EVENT,
+									"%s", STRING_CHECK(event.to_string(true)));
+							}
 
-						float_data = (GLfloat *) event.context();
-						if(!float_data || (event.length() != sizeof(GLfloat))) {
-							THROW_GAEA_CAMERA_EXCEPTION_FORMAT(GAEA_CAMERA_EXCEPTION_INVALID_EVENT,
-								"%s", STRING_CHECK(event.to_string(true)));
-						}
+							instance->set_dimensions(*ivec2_data);
+							instance->update_projection();
+							break;
+						case EVENT_CAMERA_FOV_DELTA:
+						case EVENT_CAMERA_FOV_SET:
 
-						switch(specifier) {
-							case EVENT_CAMERA_FOV_DELTA:
-								instance->m_fov_delta -= *float_data;
-								break;
-							case EVENT_CAMERA_FOV_SET:
-								instance->set_fov(*float_data);
-								instance->update_projection();
-								break;
-							default:
-								break;
-						}
-						break;
-					case EVENT_CAMERA_POSITION_DELTA:
-					case EVENT_CAMERA_POSITION_SET:
-					case EVENT_CAMERA_ROTATION_DELTA:
-					case EVENT_CAMERA_ROTATION_SET:
-					case EVENT_CAMERA_UP_DELTA:
-					case EVENT_CAMERA_UP_SET:
+							float_data = (GLfloat *) event.context();
+							if(!float_data || (event.length() != sizeof(GLfloat))) {
+								THROW_GAEA_CAMERA_EXCEPTION_FORMAT(GAEA_CAMERA_EXCEPTION_INVALID_EVENT,
+									"%s", STRING_CHECK(event.to_string(true)));
+							}
 
-						vec3_data = (glm::vec3 *) event.context();
-						if(!vec3_data || (event.length() != sizeof(glm::vec3))) {
-							THROW_GAEA_CAMERA_EXCEPTION_FORMAT(GAEA_CAMERA_EXCEPTION_INVALID_EVENT,
-								"%s", STRING_CHECK(event.to_string(true)));
-						}
+							switch(specifier) {
+								case EVENT_CAMERA_FOV_DELTA:
+									instance->m_fov_delta -= *float_data;
+									break;
+								case EVENT_CAMERA_FOV_SET:
+									instance->set_fov(*float_data);
+									instance->update_projection();
+									break;
+								default:
+									break;
+							}
+							break;
+						case EVENT_CAMERA_POSITION_DELTA:
+						case EVENT_CAMERA_POSITION_SET:
+						case EVENT_CAMERA_ROTATION_DELTA:
+						case EVENT_CAMERA_ROTATION_SET:
+						case EVENT_CAMERA_UP_DELTA:
+						case EVENT_CAMERA_UP_SET:
 
-						switch(specifier) {
-							case EVENT_CAMERA_POSITION_DELTA:
-								instance->m_position_delta += *vec3_data;
-								break;
-							case EVENT_CAMERA_POSITION_SET:
-								instance->m_position = *vec3_data;
-								break;
-							case EVENT_CAMERA_ROTATION_DELTA:
-								instance->m_rotation_delta += *vec3_data;
-								break;
-							case EVENT_CAMERA_ROTATION_SET:
-								instance->m_rotation = *vec3_data;
-								break;
-							case EVENT_CAMERA_UP_DELTA:
-								instance->m_up_delta += *vec3_data;
-								break;
-							case EVENT_CAMERA_UP_SET:
-								instance->m_up = *vec3_data;
-								break;
-							default:
-								break;
-						}
-						break;
-					default:
-						break;
+							vec3_data = (glm::vec3 *) event.context();
+							if(!vec3_data || (event.length() != sizeof(glm::vec3))) {
+								THROW_GAEA_CAMERA_EXCEPTION_FORMAT(GAEA_CAMERA_EXCEPTION_INVALID_EVENT,
+									"%s", STRING_CHECK(event.to_string(true)));
+							}
+
+							switch(specifier) {
+								case EVENT_CAMERA_POSITION_DELTA:
+									instance->m_position_delta += *vec3_data;
+									break;
+								case EVENT_CAMERA_POSITION_SET:
+									instance->m_position = *vec3_data;
+									break;
+								case EVENT_CAMERA_ROTATION_DELTA:
+									instance->m_rotation_delta += *vec3_data;
+									break;
+								case EVENT_CAMERA_ROTATION_SET:
+									instance->m_rotation = *vec3_data;
+									break;
+								case EVENT_CAMERA_UP_DELTA:
+									instance->m_up_delta += *vec3_data;
+									break;
+								case EVENT_CAMERA_UP_SET:
+									instance->m_up = *vec3_data;
+									break;
+								default:
+									break;
+							}
+							break;
+						default:
+							break;
+					}	
 				}
 			}
 
@@ -291,7 +294,7 @@ namespace gaea {
 			void 
 			_base::setup(void)
 			{
-				gaea::engine::event::observer::register_handler(&base::event_handler, EVENT_CAMERA, this);
+				gaea::engine::observer::base::register_handler(&base::event_handler, EVENT_CAMERA, this);
 				update_projection();
 				update_view();
 			}
@@ -324,7 +327,14 @@ namespace gaea {
 			{
 
 				if(m_fov_delta) {
+
 					m_fov += m_fov_delta;
+					if(m_fov < CAMERA_FOV_MIN) {
+						m_fov = CAMERA_FOV_MIN;
+					} else if(m_fov > CAMERA_FOV_MAX) {
+						m_fov = CAMERA_FOV_MAX;
+					}
+
 					m_fov_delta = 0.f;
 					update_projection();
 				}

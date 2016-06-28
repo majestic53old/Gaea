@@ -112,8 +112,8 @@ namespace gaea {
 	#define VERSION_MAJOR 0
 	#define VERSION_MILESTONE "alpha"
 	#define VERSION_MINOR 1
-	#define VERSION_REVISION 6
-	#define VERSION_WEEK 1626
+	#define VERSION_REVISION 1
+	#define VERSION_WEEK 1627
 }
 
 #endif // GAEA_DEFINE_H_

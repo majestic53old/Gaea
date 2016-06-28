@@ -41,7 +41,7 @@ namespace gaea {
 
 			typedef class _base :
 					public gaea::engine::entity::base_position,
-					public gaea::engine::event::observer {
+					public gaea::engine::observer::base {
 
 				public:
 

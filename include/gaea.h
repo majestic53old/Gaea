@@ -26,6 +26,8 @@
 #include "engine/gaea_signal.h"
 #include "engine/gaea_object.h"
 #include "engine/gaea_event.h"
+#include "engine/gaea_observer.h"
+#include "engine/gaea_follower.h"
 #include "graphics/gaea_gl.h"
 #include "graphics/gaea_vbo.h"
 #include "graphics/gaea_vao.h"
@@ -40,10 +42,6 @@
 namespace gaea {
 
 	#define FULLSCREEN_INIT false
-	#define PLAYER_SENSITIVITY_INIT 1.f
-	#define PLAYER_SENSITIVITY_MIN 0.1f
-	#define PLAYER_SPEED_INIT 5.f
-	#define PLAYER_SPEED_MIN 1.f
 	#define TICK_INIT 0
 	#define TICK_INVALID SCALAR_INVALID(gaea::tick_t)
 
@@ -73,8 +71,8 @@ namespace gaea {
 				__in const std::string &title,
 				__in const glm::uvec2 &dimensions,
 				__in_opt bool fullscreen = FULLSCREEN_INIT,
-				__in_opt GLfloat speed = PLAYER_SPEED_INIT,
-				__in_opt GLfloat sensitivity = PLAYER_SENSITIVITY_INIT,
+				__in_opt GLfloat speed = FOLLOWER_SPEED_INIT,
+				__in_opt GLfloat sensitivity = FOLLOWER_SENSITIVITY_INIT,
 				__in_opt gaea::tick_t tick = TICK_INIT
 				);
 
@@ -110,8 +108,8 @@ namespace gaea {
 				__in const std::string &title,
 				__in const glm::uvec2 &dimensions,
 				__in_opt bool fullscreen = FULLSCREEN_INIT,
-				__in_opt GLfloat speed = PLAYER_SPEED_INIT,
-				__in_opt GLfloat sensitivity = PLAYER_SENSITIVITY_INIT,
+				__in_opt GLfloat speed = FOLLOWER_SPEED_INIT,
+				__in_opt GLfloat sensitivity = FOLLOWER_SENSITIVITY_INIT,
 				__in_opt gaea::tick_t tick = TICK_INIT
 				);
 

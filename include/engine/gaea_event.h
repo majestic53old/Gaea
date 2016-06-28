@@ -28,11 +28,19 @@ namespace gaea {
 	#define EVENT_MAX EVENT_INPUT
 	#define EVENT_SPECIFIER_UNDEFINED SCALAR_INVALID(uint32_t)
 
+	#define EVENT_STRING(_TYPE_) \
+		((_TYPE_) > EVENT_MAX ? STRING_UNKNOWN : \
+		STRING_CHECK(EVENT_STR[_TYPE_]))
+
 	typedef enum {
 		EVENT_UNDEFINED = 0,
 		EVENT_CAMERA,
 		EVENT_INPUT,
 	} event_t;
+
+	static const std::string EVENT_STR[] = {
+		"UNDEFINED", "CAMERA", "INPUT",
+		};
 
 	enum {
 		EVENT_CAMERA_CLIP_SET = 0,
@@ -123,59 +131,6 @@ namespace gaea {
 				__in gaea::engine::event::base &event,
 				__in void *context
 				);
-
-			typedef class _observer {
-
-				public:
-
-					_observer(void);
-
-					_observer(
-						__in const _observer &other
-						);
-
-					virtual ~_observer(void);
-
-					_observer &operator=(
-						__in const _observer &other
-						);
-
-					static std::string as_string(
-						__in const _observer &object,
-						__in_opt bool verbose = false
-						);
-
-					bool is_handler_registered(
-						__in gaea::event_t type
-						);
-
-					void register_handler(
-						__in gaea::engine::event::handler_cb handler,
-						__in gaea::event_t type,
-						__in_opt void *context = nullptr
-						);
-
-					size_t size(void);
-
-					virtual std::string to_string(
-						__in_opt bool verbose = false
-						);
-
-					void unregister_all_handlers(void);
-
-					void unregister_handler(
-						__in gaea::event_t type
-						);
-
-				protected:
-
-					std::map<gaea::event_t, std::pair<gaea::engine::event::handler_cb, void *>>::iterator find(
-						__in gaea::event_t type
-						);
-
-					std::map<gaea::event_t, std::pair<gaea::engine::event::handler_cb, void *>> m_handler;
-
-			} observer;
 
 			typedef class _manager {
 

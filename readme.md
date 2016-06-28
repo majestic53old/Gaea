@@ -12,6 +12,12 @@ Table of Contents
 Changelog
 =========
 
+###Version 0.1.1627
+*Updated: 6/26/2016*
+
+* Added follower base class
+* Moved observer class into a seperate file
+
 ###Version 0.1.1626
 *Updated: 6/25/2016*
 

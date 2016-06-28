@@ -251,14 +251,6 @@ namespace gaea {
 				SDL_GetError());
 		}
 
-		if(sensitivity < PLAYER_SENSITIVITY_MIN) {
-			sensitivity = PLAYER_SENSITIVITY_MIN;
-		}
-
-		if(speed < PLAYER_SPEED_MIN) {
-			speed = PLAYER_SPEED_MIN;
-		}
-
 		m_uid_manager.initialize();
 		m_event_manager.initialize();
 		m_gfx_manager.initialize();
