@@ -26,13 +26,13 @@ namespace gaea {
 
 		namespace entity {
 
-			static const std::string ENTITY_STR[] = {
-				"CAMERA", "SURFACE",
-				};
-
 			#define ENTITY_STRING(_TYPE_) \
 				((_TYPE_) > ENTITY_MAX ? STRING_UNKNOWN : \
 				STRING_CHECK(ENTITY_STR[_TYPE_]))
+
+			static const std::string ENTITY_STR[] = {
+				"CAMERA", "SURFACE",
+				};
 
 			_base::_base(
 				__in gaea::entity_t type,

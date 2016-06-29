@@ -27,7 +27,6 @@
 #include "engine/gaea_object.h"
 #include "engine/gaea_event.h"
 #include "engine/gaea_observer.h"
-#include "engine/gaea_follower.h"
 #include "graphics/gaea_gl.h"
 #include "graphics/gaea_vbo.h"
 #include "graphics/gaea_vao.h"
@@ -71,8 +70,9 @@ namespace gaea {
 				__in const std::string &title,
 				__in const glm::uvec2 &dimensions,
 				__in_opt bool fullscreen = FULLSCREEN_INIT,
-				__in_opt GLfloat speed = FOLLOWER_SPEED_INIT,
-				__in_opt GLfloat sensitivity = FOLLOWER_SENSITIVITY_INIT,
+				__in_opt const std::map<gaea::key_t, SDL_Scancode> &key_map = INPUT_KEY_MAP_INIT,
+				__in_opt GLfloat speed = INPUT_SPEED_INIT,
+				__in_opt GLfloat sensitivity = INPUT_SENSITIVITY_INIT,
 				__in_opt gaea::tick_t tick = TICK_INIT
 				);
 
@@ -108,8 +108,9 @@ namespace gaea {
 				__in const std::string &title,
 				__in const glm::uvec2 &dimensions,
 				__in_opt bool fullscreen = FULLSCREEN_INIT,
-				__in_opt GLfloat speed = FOLLOWER_SPEED_INIT,
-				__in_opt GLfloat sensitivity = FOLLOWER_SENSITIVITY_INIT,
+				__in_opt const std::map<gaea::key_t, SDL_Scancode> &key_map = INPUT_KEY_MAP_INIT,
+				__in_opt GLfloat speed = INPUT_SPEED_INIT,
+				__in_opt GLfloat sensitivity = INPUT_SENSITIVITY_INIT,
 				__in_opt gaea::tick_t tick = TICK_INIT
 				);
 

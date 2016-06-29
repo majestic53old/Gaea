@@ -27,7 +27,7 @@ namespace gaea {
 		namespace model {
 
 			typedef class _base :
-					gaea::engine::entity::base_model {
+					public gaea::engine::entity::base_model {
 
 				public:
 
@@ -108,6 +108,55 @@ namespace gaea {
 					gaea::graphics::vao::base m_vao;
 
 			} base;
+
+			typedef class _base_controllable :
+					public gaea::engine::model::base,
+					public gaea::engine::observer::base_input {
+
+				public:
+
+					_base_controllable(
+						__in_opt const glm::vec3 &position = ENTITY_POSITION_INIT,
+						__in_opt const glm::vec3 &rotation = ENTITY_ROTATION_INIT,
+						__in_opt const glm::vec3 &up = ENTITY_UP_INIT,
+						__in_opt bool visible = ENTITY_VISIBLE_INIT,
+						__in_opt const std::map<gaea::key_t, SDL_Scancode> &key_map = INPUT_KEY_MAP_INIT,
+						__in_opt GLfloat speed = INPUT_SPEED_INIT,
+						__in_opt GLfloat sensitivity = INPUT_SENSITIVITY_INIT
+						);
+
+					_base_controllable(
+						__in const _base_controllable &other
+						);
+
+					virtual ~_base_controllable(void);
+
+					_base_controllable &operator=(
+						__in const _base_controllable &other
+						);
+
+					static std::string as_string(
+						__in const _base_controllable &object,
+						__in_opt bool verbose = false
+						);
+
+					virtual void render(
+						__in const glm::vec3 &position,
+						__in const glm::vec3 &rotation,
+						__in const glm::vec3 &up,
+						__in const glm::mat4 &projection,
+						__in const glm::mat4 &view
+						);
+
+					virtual std::string to_string(
+						__in_opt bool verbose = false
+						);
+
+					virtual void update(
+						__in GLfloat delta
+						);
+
+			} base_controllable;
 		}
 	}
 }

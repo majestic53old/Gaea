@@ -153,6 +153,7 @@ namespace gaea {
 		__in const std::string &title,
 		__in const glm::uvec2 &dimensions,
 		__in_opt bool fullscreen,
+		__in_opt const std::map<gaea::key_t, SDL_Scancode> &key_map,
 		__in_opt GLfloat speed,
 		__in_opt GLfloat sensitivity,
 		__in_opt gaea::tick_t tick
@@ -257,7 +258,7 @@ namespace gaea {
 		m_entity_manager.initialize();
 		m_camera_manager.initialize(dimensions);
 
-		// TODO: HANDLE SPEED/SENSITIVITY SETTINGS
+		// TODO: HANDLE KEYMAP/SPEED/SENSITIVITY SETTINGS
 
 		// TODO: initialize singletons
 
@@ -268,6 +269,7 @@ namespace gaea {
 		__in const std::string &title,
 		__in const glm::uvec2 &dimensions,
 		__in_opt bool fullscreen,
+		__in_opt const std::map<gaea::key_t, SDL_Scancode> &key_map,
 		__in_opt GLfloat speed,
 		__in_opt GLfloat sensitivity,
 		__in_opt gaea::tick_t tick
@@ -284,7 +286,7 @@ namespace gaea {
 			THROW_GAEA_EXCEPTION(GAEA_EXCEPTION_STARTED);
 		}
 
-		setup(title, dimensions, fullscreen, speed, sensitivity, tick);
+		setup(title, dimensions, fullscreen, key_map, speed, sensitivity, tick);
 		gaea::engine::camera::base &camera = m_camera_manager.entry();
 
 		// TODO: DEBUGGING
@@ -301,7 +303,9 @@ namespace gaea {
 			glm::vec3(-1.f, -1.f, 0.f), glm::vec3(1.f, -1.f, 0.f), glm::vec3(0.f,  1.f, 0.f),
 			};
 
-		gaea::engine::model::base *model_test = new gaea::engine::model::base(glm::vec3(0.f, 0.f, 4.f));
+		gaea::engine::model::base_controllable *model_test = 
+			new gaea::engine::model::base_controllable(glm::vec3(0.f, 0.f, 4.f), ENTITY_ROTATION_INIT, ENTITY_UP_INIT,
+				ENTITY_VISIBLE_INIT, key_map, speed, sensitivity);
 		if(model_test) {
 			model_test->add_attribute(COLOR, sizeof(COLOR), GL_ARRAY_BUFFER, GL_STATIC_DRAW, ATTRIB_COLOR,
 				sizeof(glm::vec3) / sizeof(GLfloat), GL_FLOAT);

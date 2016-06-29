@@ -173,6 +173,93 @@ namespace gaea {
 			{
 				return;
 			}
+
+			_base_controllable::_base_controllable(
+				__in_opt const glm::vec3 &position,
+				__in_opt const glm::vec3 &rotation,
+				__in_opt const glm::vec3 &up,
+				__in_opt bool visible,
+				__in_opt const std::map<gaea::key_t, SDL_Scancode> &key_map,
+				__in_opt GLfloat speed,
+				__in_opt GLfloat sensitivity
+				) :
+					gaea::engine::model::base(position, rotation, up, visible),
+					gaea::engine::observer::base_input(m_position, m_rotation, m_up, 
+						key_map, speed, sensitivity)
+			{
+				return;
+			}
+
+			_base_controllable::_base_controllable(
+				__in const _base_controllable &other
+				) :
+					gaea::engine::model::base(other),
+					gaea::engine::observer::base_input(other)
+			{
+				return;
+			}
+
+			_base_controllable::~_base_controllable(void)
+			{
+				return;
+			}
+
+			_base_controllable &
+			_base_controllable::operator=(
+				__in const _base_controllable &other
+				)
+			{
+
+				if(this != &other) {
+					gaea::engine::model::base::operator=(other);
+					gaea::engine::observer::base_input::operator=(other);
+				}
+
+				return *this;
+			}
+
+			std::string 
+			_base_controllable::as_string(
+				__in const _base_controllable &object,
+				__in_opt bool verbose
+				)
+			{
+				std::stringstream result;
+
+				result << gaea::engine::model::base::as_string(object, verbose)
+					<< ", " << gaea::engine::observer::base_input::as_string(object, verbose);
+
+				return result.str();
+			}
+
+			void 
+			_base_controllable::render(
+				__in const glm::vec3 &position,
+				__in const glm::vec3 &rotation,
+				__in const glm::vec3 &up,
+				__in const glm::mat4 &projection,
+				__in const glm::mat4 &view
+				)
+			{
+				gaea::engine::model::base::render(position, rotation, up, projection, view);
+			}
+
+			std::string 
+			_base_controllable::to_string(
+				__in_opt bool verbose
+				)
+			{
+				return gaea::engine::model::base_controllable::as_string(*this, verbose);
+			}
+
+			void 
+			_base_controllable::update(
+				__in GLfloat delta
+				)
+			{
+				gaea::engine::observer::base_input::update(delta);
+				gaea::engine::model::base::update(delta);
+			}
 		}
 	}
 }

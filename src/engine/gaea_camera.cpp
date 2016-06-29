@@ -55,6 +55,7 @@ namespace gaea {
 				__in const _base &other
 				) :
 					gaea::engine::entity::base_position(other),
+					gaea::engine::observer::base(other),
 					m_clip(other.m_clip),
 					m_dimensions(other.m_dimensions),
 					m_fov(other.m_fov),
@@ -81,6 +82,7 @@ namespace gaea {
 
 				if(this != &other) {
 					gaea::engine::entity::base_position::operator=(other);
+					gaea::engine::observer::base::operator=(other);
 					m_clip = other.m_clip;
 					m_dimensions = other.m_dimensions;
 					m_fov = other.m_fov;

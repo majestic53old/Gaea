@@ -13,6 +13,11 @@ Changelog
 =========
 
 ###Version 0.1.1627
+*Updated: 6/27/2016*
+
+* Added input observer class
+* Added controllable model class
+
 *Updated: 6/26/2016*
 
 * Added follower base class
